@@ -1,0 +1,17 @@
+{
+  "private": true,
+  "name": "binksi-import-image",
+  "version": "0.1.0",
+  "description": "bipsi plugin for importing tilesets and maps",
+  "scripts": {
+    "build": "rm -rf ./dist && rollup -c"
+  },
+  "author": "Florian Cargoët",
+  "license": "MIT",
+  "devDependencies": {
+    "esbuild": "0.19.4",
+    "rollup": "3.29.4",
+    "rollup-plugin-esbuild": "6.0.2",
+    "typescript": "5.2.2"
+  }
+}

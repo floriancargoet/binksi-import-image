@@ -1,10 +1,9 @@
-export async function importTileset(url) {
+export async function importTileset() {
   // TODO: ensure image is only white on transparent
   // TODO: remove missing tiles from rooms
-  if (typeof url !== "string") {
-    const [file] = await maker.pickFiles("image/png");
-    url = URL.createObjectURL(file);
-  }
+  const [file] = await maker.pickFiles("image/png");
+  const url = URL.createObjectURL(file);
+
   let img = await loadImage(url);
   img = await ensureTilesetFormat(img);
 
@@ -31,7 +30,7 @@ export async function importTileset(url) {
   });
 }
 
-async function ensureTilesetFormat(img) {
+async function ensureTilesetFormat(img: HTMLImageElement) {
   // Check the dimensions match a whole number of tiles.
   if (img.height % TILE_PX !== 0 || img.width % TILE_PX !== 0) {
     throw new Error(
@@ -46,7 +45,7 @@ async function ensureTilesetFormat(img) {
   return img;
 }
 
-async function reformatTo16Wide(img) {
+async function reformatTo16Wide(img: HTMLImageElement) {
   // We need to reformat this image.
   // 1 - create canvas for the output image.
   // 2 - iterate over tiles in the input
