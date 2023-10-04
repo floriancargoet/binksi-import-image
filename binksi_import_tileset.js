@@ -1,4 +1,4 @@
-async function importTileset(url) {
+export async function importTileset(url) {
   // TODO: ensure image is only white on transparent
   // TODO: remove missing tiles from rooms
   if (typeof url !== "string") {

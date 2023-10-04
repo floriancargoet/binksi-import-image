@@ -136,7 +136,7 @@ class ImportedMap {
   }
 }
 
-async function importMap(url) {
+export async function importMap(url) {
   if (typeof url !== "string") {
     const [file] = await maker.pickFiles("image/png");
     url = URL.createObjectURL(file);
