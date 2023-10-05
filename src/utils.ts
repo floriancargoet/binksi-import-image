@@ -1,3 +1,5 @@
+//! CODE_EDITOR
+
 export function U32ColorToRGBA(n: number) {
   const u32a = new Uint32Array([n]);
   const u8a = new Uint8ClampedArray(u32a.buffer);

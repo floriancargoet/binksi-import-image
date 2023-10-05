@@ -1,6 +1,8 @@
 import { importMap } from "./importMap";
 import { importTileset } from "./importTileset";
 
+//! CODE_EDITOR
+
 declare global {
   interface BipsiEditor {
     loadedEditorPlugins?: Set<String>;

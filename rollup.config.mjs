@@ -1,14 +1,12 @@
-import esbuild from "rollup-plugin-esbuild";
+import typescript from "rollup-plugin-typescript2";
 
 export default {
   input: "src/import-image.ts",
-  plugins: [esbuild()],
+  plugins: [typescript()],
   output: [
     {
       file: `dist/import-image.js`,
-      format: "iife",
-      indent: false,
-      extend: false,
+      format: "es",
       banner: "//! CODE_EDITOR",
     },
   ],

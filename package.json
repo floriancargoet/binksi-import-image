@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "binksi-import-image",
+  "name": "bipsi-import-image",
   "version": "0.1.0",
   "description": "bipsi plugin for importing tilesets and maps",
   "scripts": {
@@ -11,7 +11,7 @@
   "devDependencies": {
     "esbuild": "0.19.4",
     "rollup": "3.29.4",
-    "rollup-plugin-esbuild": "6.0.2",
+    "rollup-plugin-typescript2": "0.36.0",
     "typescript": "5.2.2"
   }
 }

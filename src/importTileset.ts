@@ -1,3 +1,5 @@
+//! CODE_EDITOR
+
 export async function importTileset() {
   // TODO: ensure image is only white on transparent
   // TODO: remove missing tiles from rooms

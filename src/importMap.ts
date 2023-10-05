@@ -1,5 +1,7 @@
 import { U32ColorToHex } from "./utils";
 
+//! CODE_EDITOR
+
 interface Tile {
   uid: string;
   index: number;
