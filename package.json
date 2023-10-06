@@ -11,6 +11,7 @@
   "devDependencies": {
     "esbuild": "0.19.4",
     "rollup": "3.29.4",
+    "rollup-plugin-svgo": "2.0.0",
     "rollup-plugin-typescript2": "0.36.0",
     "typescript": "5.2.2"
   }

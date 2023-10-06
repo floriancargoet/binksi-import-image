@@ -227,6 +227,8 @@ async function reformatTo16Wide(img) {
     return await loadImage(output.canvas.toDataURL());
 }
 
+var imageUp = "<svg width=\"22\" height=\"15\" fill=\"currentColor\" viewBox=\"0 0 22 15\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M9 4.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z\"/><path d=\"M5 0a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h9.777A4.5 4.5 0 0 1 14 11.5a4.5 4.5 0 0 1 2.256-3.898l-2.033-1.05a.5.5 0 0 0-.577.094l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L4 11V2a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v5.043A4.5 4.5 0 0 1 18.5 7a4.5 4.5 0 0 1 .5.03V2a2 2 0 0 0-2-2z\"/><path d=\"M18.495 15a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zm.354-5.854 1.5 1.5a.5.5 0 0 1-.708.708l-.646-.647V13.5a.5.5 0 0 1-1 0v-2.793l-.646.647a.5.5 0 0 1-.708-.708l1.5-1.5a.5.5 0 0 1 .708 0z\"/></svg>";
+
 const PLUGIN_NAME = "import-image";
 function setupEditorPlugin() {
     // Prevent repeating this setup
@@ -234,24 +236,23 @@ function setupEditorPlugin() {
     EDITOR.loadedEditorPlugins.add(PLUGIN_NAME);
     // Create button
     const tpl = document.createElement("template");
-    tpl.innerHTML = `<div class="horizontal-capsule" id="import-image-toolbar">
-      <button class="icon-button" name="import-tileset" title="import tileset">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-          <path d="M13 0H6a2 2 0 0 0-2 2 2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h7a2 2 0 0 0 2-2 2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm0 13V4a2 2 0 0 0-2-2H5a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1zM3 4a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4z"></path>
-        </svg>
+    tpl.innerHTML = `<div class="horizontal-capsule" id="import-image-toolbar" hidden style="flex: none; width: 120px;">
+      <button name="import-tileset" title="import image as tileset">
+        <span style="font-size:10px">tileset</span>
+        ${imageUp}
       </button>
-      <button class="icon-button" name="import-map" title="import map">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-          <path d="M13 0H6a2 2 0 0 0-2 2 2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h7a2 2 0 0 0 2-2 2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm0 13V4a2 2 0 0 0-2-2H5a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1zM3 4a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4z"></path>
+      <button name="import-map" title="import image as map">
+        <span style="font-size:10px">map</span>
+        ${imageUp}
         </svg>
       </button>
     </div>`;
     const tileToolbar = ONE("#draw-room-tab-controls .viewport-toolbar");
     tileToolbar.append(tpl.content);
-    const importImageButton = ONE('[name="import-tileset"]', tileToolbar);
-    const importMapButton = ONE('[name="import-map"]', tileToolbar);
-    EDITOR.roomPaintTool.tab(importImageButton, "tile");
-    EDITOR.roomPaintTool.tab(importMapButton, "tile");
+    const importToolbar = ONE("#import-image-toolbar");
+    const importImageButton = ONE('[name="import-tileset"]', importToolbar);
+    const importMapButton = ONE('[name="import-map"]', importToolbar);
+    EDITOR.roomPaintTool.tab(importToolbar, "tile");
     importImageButton.addEventListener("click", importTileset);
     importMapButton.addEventListener("click", importMap);
 }
