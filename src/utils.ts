@@ -3,7 +3,7 @@
 export function U32ColorToRGBA(n: number) {
   const u32a = new Uint32Array([n]);
   const u8a = new Uint8ClampedArray(u32a.buffer);
-  return Array.from(u8a);
+  return Array.from(u8a) as [number, number, number, number];
 }
 
 export function U32ColorToHex(n: number) {

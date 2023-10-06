@@ -4,6 +4,7 @@ export async function importTileset() {
   // TODO: ensure image is only white on transparent
   // TODO: remove missing tiles from rooms
   const [file] = await maker.pickFiles("image/png");
+  if (!file) return;
   const url = URL.createObjectURL(file);
 
   let img = await loadImage(url);

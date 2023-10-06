@@ -21,7 +21,7 @@ class ImportedMap {
 
   get transparentColor() {
     const [first] = this.mapColors;
-    return first;
+    return first!; // There's always as least one color
   }
 
   createTilesFromMapImage(img: HTMLImageElement) {
@@ -81,10 +81,7 @@ class ImportedMap {
   getOrCreateTile(ctx: CanvasRenderingContext2D) {
     const imageData = ctx.getImageData(0, 0, TILE_PX, TILE_PX);
     const uid = ctx.canvas.toDataURL("image/png");
-    if (!this.tiles[uid]) {
-      this.tiles[uid] = this.createTile(uid, imageData);
-    }
-    return this.tiles[uid];
+    return (this.tiles[uid] ??= this.createTile(uid, imageData));
   }
 
   createTile(uid: string, imageData: ImageData): Tile {
@@ -92,7 +89,7 @@ class ImportedMap {
     const colors = new Set<number>();
     // const counts = {};
     for (let i = 0; i < d.length; i++) {
-      const color = d[i];
+      const color = d[i]!;
       colors.add(color);
       // counts[color] ??= 0;
       // counts[color]++;
@@ -140,7 +137,7 @@ class ImportedMap {
 }
 
 type Options = {
-  keepColors: boolean;
+  keepColors: boolean | Array<number>;
 };
 
 const defaultOptions: Options = {
@@ -151,6 +148,7 @@ export async function importMap(options?: Partial<Options>) {
   const fullOptions: Options = { ...defaultOptions, ...options };
 
   const [file] = await maker.pickFiles("image/png");
+  if (!file) return;
   const url = URL.createObjectURL(file);
 
   const map = new ImportedMap(await loadImage(url));
@@ -164,7 +162,7 @@ export async function importMap(options?: Partial<Options>) {
     const tiles = Object.values(map.tiles);
     data.tiles = [];
     for (let i = 0; i < tiles.length; i++) {
-      data.tiles.push({ id: tiles[i].index, frames: [i] });
+      data.tiles.push({ id: tiles[i]!.index, frames: [i] });
     }
     resizeTileset(tileset, data.tiles);
     EDITOR.tileBrowser.selectedTileIndex = 0;
@@ -175,9 +173,9 @@ export async function importMap(options?: Partial<Options>) {
     // Palette
     const colors = [...map.mapColors];
     const palette = makeBlankPalette(0);
-    data.palettes = [palette];
+    data.palettes[0] = palette;
     for (let i = 0; i < colors.length; i++) {
-      palette.colors[i + 1] = U32ColorToHex(colors[i]);
+      palette.colors[i + 1] = U32ColorToHex(colors[i]!);
     }
 
     // Rooms
@@ -185,7 +183,7 @@ export async function importMap(options?: Partial<Options>) {
 
     map.rooms.forEach((mapRoom, i) => {
       const overwrittenRoom = data.rooms[i];
-      const bipsiRoom = makeBlankRoom(i + 1, data.palettes[0].id);
+      const bipsiRoom = makeBlankRoom(i + 1, data.palettes[0]!.id);
       if (overwrittenRoom) {
         bipsiRoom.events = overwrittenRoom.events;
         bipsiRoom.wallmap = overwrittenRoom.wallmap;
@@ -194,16 +192,22 @@ export async function importMap(options?: Partial<Options>) {
       bipsiRoom.foremap = mapRoom.map((line) =>
         line.map((tile) => {
           // find which one is not the transparent color
-          let index;
-          if (tile.colors[0] !== transparentColor) {
-            index = colors.indexOf(tile.colors[0]);
+          let index = 0;
+          const [color0 = -1, color1 = -1] = tile.colors;
+          if (color0 !== transparentColor) {
+            index = colors.indexOf(color0);
           } else {
-            index = colors.indexOf(tile.colors[1]);
+            index = colors.indexOf(color1);
           }
           return index + 1;
         })
       );
-      if (overwrittenRoom && fullOptions.keepColors) {
+      if (
+        overwrittenRoom &&
+        (fullOptions.keepColors === true ||
+          (Array.isArray(fullOptions.keepColors) &&
+            fullOptions.keepColors.includes(i)))
+      ) {
         bipsiRoom.foremap = overwrittenRoom.foremap;
         bipsiRoom.backmap = overwrittenRoom.backmap;
       }

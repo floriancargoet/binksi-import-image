@@ -21,7 +21,7 @@ class ImportedMap {
     }
     get transparentColor() {
         const [first] = this.mapColors;
-        return first;
+        return first; // There's always as least one color
     }
     createTilesFromMapImage(img) {
         // Check the dimensions match a whole number of rooms.
@@ -33,7 +33,11 @@ class ImportedMap {
         const roomCols = img.width / roomSize;
         const roomRows = img.height / roomSize;
         // Canvas so we can read pixels for color detection.
-        const tileCtx = createRendering2D(TILE_PX, TILE_PX);
+        const tileCanvas = document.createElement("canvas");
+        tileCanvas.width = TILE_PX;
+        tileCanvas.height = TILE_PX;
+        const tileCtx = tileCanvas.getContext("2d", { willReadFrequently: true }); // optimisation
+        tileCtx.imageSmoothingEnabled = false;
         for (let row = 0; row < roomRows; row++) {
             for (let col = 0; col < roomCols; col++) {
                 const room = [];
@@ -59,12 +63,10 @@ class ImportedMap {
         }
     }
     getOrCreateTile(ctx) {
+        var _a;
         const imageData = ctx.getImageData(0, 0, TILE_PX, TILE_PX);
         const uid = ctx.canvas.toDataURL("image/png");
-        if (!this.tiles[uid]) {
-            this.tiles[uid] = this.createTile(uid, imageData);
-        }
-        return this.tiles[uid];
+        return ((_a = this.tiles)[uid] ?? (_a[uid] = this.createTile(uid, imageData)));
     }
     createTile(uid, imageData) {
         const d = new Uint32Array(imageData.data.buffer); // endianness dependant!
@@ -114,8 +116,14 @@ class ImportedMap {
         });
     }
 }
-async function importMap() {
+const defaultOptions = {
+    keepColors: false,
+};
+async function importMap(options) {
+    const fullOptions = { ...defaultOptions, ...options };
     const [file] = await maker.pickFiles("image/png");
+    if (!file)
+        return;
     const url = URL.createObjectURL(file);
     const map = new ImportedMap(await loadImage(url));
     // Create bipsi rooms & tiles
@@ -135,7 +143,7 @@ async function importMap() {
         // Palette
         const colors = [...map.mapColors];
         const palette = makeBlankPalette(0);
-        data.palettes = [palette];
+        data.palettes[0] = palette;
         for (let i = 0; i < colors.length; i++) {
             palette.colors[i + 1] = U32ColorToHex(colors[i]);
         }
@@ -151,15 +159,23 @@ async function importMap() {
             bipsiRoom.tilemap = mapRoom.map((line) => line.map((tile) => tile.index));
             bipsiRoom.foremap = mapRoom.map((line) => line.map((tile) => {
                 // find which one is not the transparent color
-                let index;
-                if (tile.colors[0] !== transparentColor) {
-                    index = colors.indexOf(tile.colors[0]);
+                let index = 0;
+                const [color0 = -1, color1 = -1] = tile.colors;
+                if (color0 !== transparentColor) {
+                    index = colors.indexOf(color0);
                 }
                 else {
-                    index = colors.indexOf(tile.colors[1]);
+                    index = colors.indexOf(color1);
                 }
                 return index + 1;
             }));
+            if (overwrittenRoom &&
+                (fullOptions.keepColors === true ||
+                    (Array.isArray(fullOptions.keepColors) &&
+                        fullOptions.keepColors.includes(i)))) {
+                bipsiRoom.foremap = overwrittenRoom.foremap;
+                bipsiRoom.backmap = overwrittenRoom.backmap;
+            }
             data.rooms[i] = bipsiRoom;
         });
         EDITOR.roomSelectWindow.select.selectedIndex = 0;
@@ -172,6 +188,8 @@ async function importTileset() {
     // TODO: ensure image is only white on transparent
     // TODO: remove missing tiles from rooms
     const [file] = await maker.pickFiles("image/png");
+    if (!file)
+        return;
     const url = URL.createObjectURL(file);
     let img = await loadImage(url);
     img = await ensureTilesetFormat(img);
@@ -253,8 +271,8 @@ function setupEditorPlugin() {
     const importImageButton = ONE('[name="import-tileset"]', importToolbar);
     const importMapButton = ONE('[name="import-map"]', importToolbar);
     EDITOR.roomPaintTool.tab(importToolbar, "tile");
-    importImageButton.addEventListener("click", importTileset);
-    importMapButton.addEventListener("click", importMap);
+    importImageButton.addEventListener("click", () => importTileset());
+    importMapButton.addEventListener("click", () => importMap());
 }
 if (!EDITOR.loadedEditorPlugins?.has(PLUGIN_NAME)) {
     setupEditorPlugin();
