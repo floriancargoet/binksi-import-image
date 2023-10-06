@@ -36,8 +36,8 @@ function setupEditorPlugin() {
   const importImageButton = ONE('[name="import-tileset"]', importToolbar);
   const importMapButton = ONE('[name="import-map"]', importToolbar);
   EDITOR.roomPaintTool.tab(importToolbar, "tile");
-  importImageButton.addEventListener("click", importTileset);
-  importMapButton.addEventListener("click", importMap);
+  importImageButton.addEventListener("click", () => importTileset());
+  importMapButton.addEventListener("click", () => importMap());
 }
 
 if (!EDITOR.loadedEditorPlugins?.has(PLUGIN_NAME)) {

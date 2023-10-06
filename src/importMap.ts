@@ -36,7 +36,11 @@ class ImportedMap {
     const roomCols = img.width / roomSize;
     const roomRows = img.height / roomSize;
     // Canvas so we can read pixels for color detection.
-    const tileCtx = createRendering2D(TILE_PX, TILE_PX);
+    const tileCanvas = document.createElement("canvas");
+    tileCanvas.width = TILE_PX;
+    tileCanvas.height = TILE_PX;
+    const tileCtx = tileCanvas.getContext("2d", { willReadFrequently: true })!; // optimisation
+    tileCtx.imageSmoothingEnabled = false;
 
     for (let row = 0; row < roomRows; row++) {
       for (let col = 0; col < roomCols; col++) {
@@ -135,7 +139,17 @@ class ImportedMap {
   }
 }
 
-export async function importMap() {
+type Options = {
+  keepColors: boolean;
+};
+
+const defaultOptions: Options = {
+  keepColors: false,
+};
+
+export async function importMap(options?: Partial<Options>) {
+  const fullOptions: Options = { ...defaultOptions, ...options };
+
   const [file] = await maker.pickFiles("image/png");
   const url = URL.createObjectURL(file);
 
@@ -189,6 +203,10 @@ export async function importMap() {
           return index + 1;
         })
       );
+      if (overwrittenRoom && fullOptions.keepColors) {
+        bipsiRoom.foremap = overwrittenRoom.foremap;
+        bipsiRoom.backmap = overwrittenRoom.backmap;
+      }
       data.rooms[i] = bipsiRoom;
     });
     EDITOR.roomSelectWindow.select.selectedIndex = 0;
