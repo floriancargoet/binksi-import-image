@@ -11,3 +11,19 @@ export function U32ColorToHex(n: number) {
   const h = ("000000" + (r * 256 * 256 + g * 256 + b).toString(16)).slice(-6);
   return "#" + h;
 }
+
+export function autoCloseToggledWindow(
+  windowElement: HTMLElement,
+  toggle: CheckboxWrapper
+) {
+  window.addEventListener("click", (event) => {
+    const target = event.target as Node;
+    const ignore =
+      windowElement.hidden ||
+      !event.isTrusted ||
+      windowElement.contains(target) ||
+      toggle.inputs.includes(target as HTMLInputElement);
+    if (ignore) return;
+    toggle.checked = false;
+  });
+}

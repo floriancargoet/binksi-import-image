@@ -62,6 +62,13 @@ class RadioGroupWrapper extends EventTarget {
   tab(element: HTMLElement, ...values: Array<string>);
 }
 
+class CheckboxWrapper extends EventTarget {
+  checked: boolean;
+  inputs: Array<HTMLInputElement>;
+  constructor(inputs: HTMLInputElement[]);
+  setCheckedSilent(checked: boolean);
+}
+
 class RoomSelect {
   constructor(name: any, template: HTMLTemplateElement);
   updateRooms(rooms: Array<{ id: number; thumb: HTMLCanvasElement }>);
@@ -73,9 +80,14 @@ interface BipsiDataTile {
   frames: Array<number>;
 }
 
+interface UI {
+  toggle: (name: string) => CheckboxWrapper;
+}
+
 declare const TILE_PX: nuumber;
 declare const EDITOR: BipsiEditor;
 declare const maker: Maker;
+declare const ui: UI;
 
 declare function loadImage(str: string): Promise<HTMLImageElement>;
 declare function resizeTileset(
@@ -109,3 +121,16 @@ declare function ONE(
   query: string,
   element: ParentNode = undefined
 ): HTMLElement;
+
+declare function ALL(
+  query: string,
+  element: ParentNode = undefined
+): Array<HTMLElement>;
+
+declare function FIELD(
+  event: BipsiDataEvent,
+  name: string,
+  type: string = undefined
+): unknown;
+
+declare const CONFIG: BipsiDataEvent;

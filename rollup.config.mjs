@@ -2,9 +2,11 @@ import typescript from "rollup-plugin-typescript2";
 import svgo from "rollup-plugin-svgo";
 
 export default {
-  input: "src/import-image.ts",
+  input: "src/import-image/import-image.ts",
   plugins: [
-    typescript(),
+    typescript({
+      clean: true,
+    }),
     svgo({
       plugins: [
         {

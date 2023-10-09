@@ -1,4 +1,4 @@
-import { U32ColorToHex } from "./utils";
+import { U32ColorToHex } from "../utils";
 
 //! CODE_EDITOR
 
@@ -136,7 +136,7 @@ class ImportedMap {
   }
 }
 
-type Options = {
+export type Options = {
   keepColors: boolean | Array<number>;
 };
 
