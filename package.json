@@ -1,8 +1,8 @@
 {
   "private": true,
-  "name": "bipsi-import-image",
+  "name": "bipsi-binksi-plugins",
   "version": "0.1.0",
-  "description": "bipsi plugin for importing tilesets and maps",
+  "description": "bipsi & binksi plugins",
   "scripts": {
     "build": "rm -rf ./dist && rollup -c"
   },

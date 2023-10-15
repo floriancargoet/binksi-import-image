@@ -26,7 +26,7 @@ export async function importTileset() {
     EDITOR.tileBrowser.selectedTileIndex = 0;
 
     // Draw image on tileset
-    const ctx = tileset.canvas.getContext("2d");
+    const ctx = tileset.canvas.getContext("2d")!;
     ctx.clearRect(0, 0, tileset.canvas.width, tileset.canvas.height);
     ctx.drawImage(img, 0, 0);
     EDITOR.requestRedraw();
