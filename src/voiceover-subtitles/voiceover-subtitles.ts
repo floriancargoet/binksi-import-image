@@ -14,7 +14,7 @@ declare global {
 }
 
 /*
-//!CONFIG container-style (json) { "bottom": "10%", "textAlign": "center", "fontSize": "14px", "color": "white", "backgroundColor": "rgba(0, 0, 0, 0.6)", "borderRadius": "4px" }
+//!CONFIG container-style (json) { "bottom": "10%", "textAlign": "center", "fontSize": "14px", "color": "white", "backgroundColor": "rgba(0, 0, 0, 0.6)", "borderRadius": "4px", "margin": "0 auto" }
 //!CONFIG subtitle-style (json) { "padding": "5px" }
 */
 

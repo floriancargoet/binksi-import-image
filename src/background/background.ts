@@ -3,7 +3,7 @@
 //
 //!CONFIG body-style (json) { "backgroundColor": "black", "backgroundSize": "contain", "backgroundRepeat": "no-repeat", "backgroundPosition": "center center" }
 //
-//!CONFIG player-container-bbox (json) { "top": 175, "left": 128, "width": 680, "height": 368 }
+//!CONFIG player-container-bbox (json) { "top": 0, "left": 0, "width": 100, "height": 100 }
 */
 
 const styleEl = document.createElement("style");
