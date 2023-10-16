@@ -1,14 +1,25 @@
+/*
 //!CONFIG image (file)
 //
 //!CONFIG player-container-bbox (json) { "top": 175, "left": 128, "width": 680, "height": 368 }
+*/
 
 const styleEl = document.createElement("style");
 document.head.append(styleEl);
 styleEl.innerHTML = `
-  #player {
-  }
   #player-container {
     position: absolute;
+  }
+
+  /* Only enable crisp-edges on the #player */
+  * {
+    image-rendering: auto;
+  }
+  #player {
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -webkit-crisp-edges;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
   }
 `;
 
@@ -55,9 +66,9 @@ function positionContainer() {
   const bgTop = (clientHeight - ratio * height) / 2;
 
   Object.assign(playerContainer.style, {
-    top: bgTop + ratio * playerInBGSpace.top,
-    left: bgLeft + ratio * playerInBGSpace.left,
-    width: ratio * playerInBGSpace.width,
-    height: ratio * playerInBGSpace.height,
+    top: Math.round(bgTop + ratio * playerInBGSpace.top),
+    left: Math.round(bgLeft + ratio * playerInBGSpace.left),
+    width: Math.round(ratio * playerInBGSpace.width),
+    height: Math.round(ratio * playerInBGSpace.height),
   });
 }
