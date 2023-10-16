@@ -136,7 +136,12 @@ SCRIPTING_FUNCTIONS.QUEUE_VO_SUB = function (
   field: string,
   event = this.EVENT
 ) {
-  voSubQueue.push(() => this.PLAY_VO_SUB(field, event));
+  return new Promise<void>((resolve) => {
+    voSubQueue.push(async () => {
+      await this.PLAY_VO_SUB(field, event);
+      resolve();
+    });
+  });
 };
 
 /*

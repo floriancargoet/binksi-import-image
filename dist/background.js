@@ -1,6 +1,8 @@
 /*
 //!CONFIG image (file)
 //
+//!CONFIG body-style (json) { "backgroundColor": "black", "backgroundSize": "contain", "backgroundRepeat": "no-repeat", "backgroundPosition": "center center" }
+//
 //!CONFIG player-container-bbox (json) { "top": 175, "left": 128, "width": 680, "height": 368 }
 */
 const styleEl = document.createElement("style");
@@ -20,8 +22,13 @@ styleEl.innerHTML = `
     image-rendering: pixelated;
     image-rendering: crisp-edges;
   }
+  /* WebGlazy overrides */
+  #canvasContainer {
+    position: absolute;
+    /* this element will be moved inside the #player to inherit its transformation */
+  }
 `;
-// new container for the player
+// New container for the player
 const playerContainer = document.createElement("div");
 playerContainer.id = "player-container";
 document.body.append(playerContainer);
@@ -34,6 +41,11 @@ let playerInBGSpace = {
     height: 0,
 };
 wrap.after(window, "start", () => {
+    // Move WebGlazy if it exists
+    const glazyCanvas = ONE("#canvasContainer");
+    if (glazyCanvas) {
+        document.getElementById("player").append(glazyCanvas);
+    }
     playerInBGSpace = {
         ...playerInBGSpace,
         ...FIELD(CONFIG, "player-container-bbox", "json"),
@@ -43,10 +55,7 @@ wrap.after(window, "start", () => {
     backgroundImage.src = imageURL;
     Object.assign(document.body.style, {
         backgroundImage: `url(${imageURL})`,
-        backgroundColor: "white",
-        backgroundSize: "contain",
-        backgroundRepeat: "no-repeat",
-        backgroundPosition: "center center",
+        ...FIELD(CONFIG, "body-style", "json"),
     });
     window.addEventListener("resize", positionContainer);
     backgroundImage.addEventListener("load", positionContainer);
@@ -60,9 +69,9 @@ function positionContainer() {
     const bgLeft = (clientWidth - ratio * width) / 2;
     const bgTop = (clientHeight - ratio * height) / 2;
     Object.assign(playerContainer.style, {
-        top: Math.round(bgTop + ratio * playerInBGSpace.top),
-        left: Math.round(bgLeft + ratio * playerInBGSpace.left),
-        width: Math.round(ratio * playerInBGSpace.width),
-        height: Math.round(ratio * playerInBGSpace.height),
+        top: Math.round(bgTop + ratio * playerInBGSpace.top) + "px",
+        left: Math.round(bgLeft + ratio * playerInBGSpace.left) + "px",
+        width: Math.round(ratio * playerInBGSpace.width) + "px",
+        height: Math.round(ratio * playerInBGSpace.height) + "px",
     });
 }
