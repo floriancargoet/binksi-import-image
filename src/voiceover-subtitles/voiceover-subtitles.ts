@@ -4,6 +4,10 @@ declare global {
   interface BipsiEditor {
     loadedEditorPlugins?: Set<String>;
   }
+  interface BipsiPlayback {
+    playVoiceOver(field: string, event: BipsiDataEvent): Promise<void>;
+    queueVoiceOver(field: string, event: BipsiDataEvent): Promise<void>;
+  }
   namespace SCRIPTING_FUNCTIONS {
     export function PLAY_VO_SUB(
       field: string,
@@ -37,6 +41,22 @@ if (EDITOR && !EDITOR.loadedEditorPlugins?.has(PLUGIN_NAME)) {
 
 //! CODE_PLAYBACK
 
+BipsiPlayback.paragraphHandlers.unshift(async function handleVoiceover({
+  paragraphText,
+}) {
+  const matchVoiceover = paragraphText.match(/VOICEOVER\(([^),]+),([^),]+)\)/);
+  if (matchVoiceover) {
+    const target = matchVoiceover[1]!.trim();
+    const field = matchVoiceover[2]!.trim();
+    const event = findEventByTag(this.data, target);
+    if (event) {
+      // We don't want to await this call (it resolves when the audio is finished)
+      this.queueVoiceOver(field, event);
+      return true;
+    }
+  }
+});
+
 let subtitlesContainer: HTMLDivElement;
 wrap.after(window, "start", () => {
   subtitlesContainer = document.createElement("div");
@@ -51,10 +71,39 @@ wrap.after(window, "start", () => {
   );
 });
 
-SCRIPTING_FUNCTIONS.PLAY_VO_SUB = async function (
-  this: ScriptingThis,
+function getSoundDuration(soundId: string) {
+  return new Promise<number>((resolve) => {
+    const a = new Audio();
+    a.addEventListener("loadedmetadata", () => {
+      resolve(a.duration);
+    });
+    a.src = PLAYBACK.getFileObjectURL(soundId);
+  });
+}
+
+class Queue {
+  running = false;
+  fns: Array<() => Promise<void>> = [];
+  push(fn: () => Promise<void>) {
+    this.fns.push(fn);
+    this.process();
+  }
+  process() {
+    if (this.running) return;
+    const fn = this.fns.shift();
+    if (!fn) return;
+    this.running = true;
+    fn().then(() => {
+      this.running = false;
+      // loop
+      if (this.fns.length > 0) this.process();
+    });
+  }
+}
+
+BipsiPlayback.prototype.playVoiceOver = async function (
   field: string,
-  event = this.EVENT
+  event: BipsiDataEvent
 ) {
   const soundId = FIELD(event, field, "file");
   const duration = await getSoundDuration(soundId);
@@ -91,65 +140,43 @@ SCRIPTING_FUNCTIONS.PLAY_VO_SUB = async function (
 
   // Return a promise that will be resolved when the sound is finished and the sub is removed.
   return new Promise((resolve) => {
-    const toRemove = this.ADD_ON_SOUND_END(() => {
+    const toRemove = this.addOnSoundEnd(() => {
       // Immediately unregister, so we are only called once.
-      this.REMOVE_ON_SOUND_END(toRemove);
+      this.removeOnSoundEnd(toRemove);
       resolve();
     }, "voiceover");
     // Now that the event handler is setup, play the sound
-    this.PLAY_SOUND(soundId, "voiceover");
+    const soundURL = this.getFileObjectURL(soundId);
+    this.playSound(soundURL, "voiceover", false, event, field);
   });
 };
 
-function getSoundDuration(soundId: string) {
-  return new Promise<number>((resolve) => {
-    const a = new Audio();
-    a.addEventListener("loadedmetadata", () => {
-      resolve(a.duration);
-    });
-    a.src = PLAYBACK.getFileObjectURL(soundId);
-  });
-}
-
-class Queue {
-  running = false;
-  fns: Array<() => Promise<void>> = [];
-  push(fn: () => Promise<void>) {
-    this.fns.push(fn);
-    this.process();
-  }
-  process() {
-    if (this.running) return;
-    const fn = this.fns.shift();
-    if (!fn) return;
-    this.running = true;
-    fn().then(() => {
-      this.running = false;
-      // loop
-      if (this.fns.length > 0) this.process();
-    });
-  }
-}
-
 const voSubQueue = new Queue();
+
+BipsiPlayback.prototype.queueVoiceOver = async function (
+  field: string,
+  event: BipsiDataEvent
+) {
+  return new Promise<void>((resolve) => {
+    voSubQueue.push(async () => {
+      await this.playVoiceOver(field, event);
+      resolve();
+    });
+  });
+};
 
 SCRIPTING_FUNCTIONS.QUEUE_VO_SUB = function (
   this: ScriptingThis,
   field: string,
   event = this.EVENT
 ) {
-  return new Promise<void>((resolve) => {
-    voSubQueue.push(async () => {
-      await this.PLAY_VO_SUB(field, event);
-      resolve();
-    });
-  });
+  return this.PLAYBACK.queueVoiceOver(field, event);
 };
 
-/*
-
-  // @ts-ignore
-  PLAYBACK.paragraphHandlers.push(function (p, tags) {
-    console.log(p, tags);
-  });
-  */
+SCRIPTING_FUNCTIONS.PLAY_VO_SUB = async function (
+  this: ScriptingThis,
+  field: string,
+  event = this.EVENT
+) {
+  this.PLAYBACK.playVoiceOver(field, event);
+};
