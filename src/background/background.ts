@@ -22,6 +22,13 @@ styleEl.innerHTML = `
     image-rendering: -webkit-crisp-edges;
     image-rendering: pixelated;
     image-rendering: crisp-edges;
+    /* Cancel bipsi's original positionning */
+    top: 0px;
+    left: 0px;
+    transform-origin: top left;
+    --player-scale-x: 1;
+    --player-scale-y: 1;
+    transform: scale(var(--player-scale-x), var(--player-scale-y)) !important;
   }
   /* WebGlazy overrides */
   #canvasContainer {
@@ -74,10 +81,23 @@ function positionContainer() {
   const bgLeft = (clientWidth - ratio * width) / 2;
   const bgTop = (clientHeight - ratio * height) / 2;
 
+  const containerTop = Math.round(bgTop + ratio * playerInBGSpace.top);
+  const containerLeft = Math.round(bgLeft + ratio * playerInBGSpace.left);
+  const containerWidth = Math.round(ratio * playerInBGSpace.width);
+  const containerHeight = Math.round(ratio * playerInBGSpace.height);
   Object.assign(playerContainer.style, {
-    top: Math.round(bgTop + ratio * playerInBGSpace.top) + "px",
-    left: Math.round(bgLeft + ratio * playerInBGSpace.left) + "px",
-    width: Math.round(ratio * playerInBGSpace.width) + "px",
-    height: Math.round(ratio * playerInBGSpace.height) + "px",
+    top: containerTop + "px",
+    left: containerLeft + "px",
+    width: containerWidth + "px",
+    height: containerHeight + "px",
   });
+  // Scale the player (the deformation is by choice)
+  const playerCanvas = document.getElementById(
+    "player-canvas"
+  ) as HTMLCanvasElement;
+  const player = document.getElementById("player")!;
+  const scaleX = containerWidth / playerCanvas.width;
+  const scaleY = containerHeight / playerCanvas.height;
+  player.style.setProperty("--player-scale-x", String(scaleX));
+  player.style.setProperty("--player-scale-y", String(scaleY));
 }
