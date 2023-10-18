@@ -14,7 +14,7 @@ declare global {
 }
 
 /*
-//!CONFIG container-style (json) { "bottom": "10%", "textAlign": "center", "fontSize": "14px", "color": "white", "backgroundColor": "rgba(0, 0, 0, 0.6)", "borderRadius": "4px", "margin": "0 auto" }
+//!CONFIG container-style (json) { "bottom": "0", "textAlign": "center", "fontSize": "14px", "color": "white", "backgroundColor": "rgba(0, 0, 0, 0.6)", "borderRadius": "4px", "margin": "10%", "selfAlign": "center" }
 //!CONFIG subtitle-style (json) { "padding": "5px" }
 */
 
@@ -41,7 +41,9 @@ let subtitlesContainer: HTMLDivElement;
 wrap.after(window, "start", () => {
   subtitlesContainer = document.createElement("div");
   subtitlesContainer.id = "subtitles";
-  document.body.append(subtitlesContainer);
+  // If using background plugin, insert in its container, otherwise, in the body
+  const backgroundContainer = document.getElementById("background-container");
+  (backgroundContainer ?? document.body).append(subtitlesContainer);
   Object.assign(
     subtitlesContainer.style,
     { position: "absolute" },
