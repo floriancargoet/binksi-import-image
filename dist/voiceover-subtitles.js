@@ -17,14 +17,18 @@ if (EDITOR && !EDITOR.loadedEditorPlugins?.has(PLUGIN_NAME)) {
 }
 //! CODE_PLAYBACK
 BipsiPlayback.paragraphHandlers.unshift(async function handleVoiceover({ paragraphText, }) {
-    const matchVoiceover = paragraphText.match(/VOICEOVER\(([^),]+),([^),]+)\)/);
+    const matchVoiceover = paragraphText.match(/(VOICEOVER|BLOCKING_VOICEOVER)\(([^),]+),([^),]+)\)/);
     if (matchVoiceover) {
-        const target = matchVoiceover[1].trim();
-        const field = matchVoiceover[2].trim();
+        const blocking = matchVoiceover[1] === "BLOCKING_VOICEOVER";
+        const target = matchVoiceover[2].trim();
+        const field = matchVoiceover[3].trim();
         const event = findEventByTag(this.data, target);
         if (event) {
             // We don't want to await this call (it resolves when the audio is finished)
-            this.queueVoiceOver(field, event);
+            // unless blocking is explicitly asked
+            const promise = this.queueVoiceOver(field, event);
+            if (blocking)
+                await promise;
             return true;
         }
     }
