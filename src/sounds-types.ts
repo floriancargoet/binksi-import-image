@@ -11,8 +11,15 @@ type SoundEndReturn = { channel: string; listenerFnc: SoundEndCB };
 
 declare global {
   interface BipsiPlayback {
-    addOnSoundEnd: (callback: SoundEndCB, channel?: string) => SoundEndReturn;
-    removeOnSoundEnd: (toRemove: SoundEndReturn) => void;
+    playSound(
+      sound: string,
+      channel: string,
+      looped: boolean,
+      soundSource: BipsiDataEvent,
+      soundName: string
+    ): void;
+    addOnSoundEnd(callback: SoundEndCB, channel?: string): SoundEndReturn;
+    removeOnSoundEnd(toRemove: SoundEndReturn): void;
   }
 
   namespace SCRIPTING_FUNCTIONS {

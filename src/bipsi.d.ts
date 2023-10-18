@@ -1241,310 +1241,13 @@ declare class StateManager<TState> extends EventTarget {
    * Replace all state by copying from another state manager.
    * @param {maker.StateManager<TState>} other
    */
-  copyFrom(other: {
-    /** @type {maker.ManifestFunction<TState>} */
-    getManifest: maker.ManifestFunction<TState>;
-    resources: {
-      lastId: number;
-      /** @type {Map<string, { type: string, instance: any }>} */
-      resources: Map<
-        string,
-        {
-          type: string;
-          instance: any;
-        }
-      >;
-      /**
-       * Generate a new unique id for a resource.
-       * @returns {string}
-       */
-      generateId(): string;
-      /**
-       * Clear all resources.
-       */
-      clear(): void;
-      /**
-       * Get the resource instance with the given id.
-       * @param {string} id
-       * @returns {any}
-       */
-      get(id: string): any;
-      /**
-       * Add a resource instance at a specific id.
-       * @param {string} id
-       * @param {any} instance
-       * @param {string} type
-       */
-      set(id: string, instance: any, type: string): void;
-      /**
-       * Add an instance as a new resource and return its new id.
-       * @param {any} instance
-       * @param {string} type
-       * @returns {string}
-       */
-      add(instance: any, type: string): string;
-      /**
-       * Copy the existing resource with the given id and add it as a new resource.
-       * @param {string} id
-       * @returns
-       */
-      fork(id: string): Promise<{
-        id: string;
-        instance: any;
-      }>;
-      /**
-       * Discard all resources except those at the ids given.
-       * @param {Iterable<string>} keepIds
-       */
-      prune(keepIds: Iterable<string>): void;
-      /**
-       * Copy all resources from another resource manager.
-       * @param {maker.ResourceManager} other
-       */
-      copyFrom(other: any): Promise<any>;
-      /**
-       * Save all resources in an object mapping id to type and save data.
-       * @param {Iterable<string>} ids
-       * @returns {Promise<maker.ResourceBundle>}
-       */
-      save(ids: Iterable<string>): Promise<{
-        [x: string]: ResourceData;
-      }>;
-      /**
-       * Load all resources from the given bundle.
-       * @param {maker.ResourceBundle} bundle
-       */
-      load(bundle: { [x: string]: ResourceData }): Promise<any>;
-    };
-    /** @type {TState[]} */
-    history: TState[];
-    index: number;
-    historyLimit: number;
-    /**
-     * The present state in history.
-     */
-    readonly present: TState;
-    /**
-     * Is there any edit history to undo to?
-     */
-    readonly canUndo: boolean;
-    /**
-     * Are there any undone edits to redo?
-     */
-    readonly canRedo: boolean;
-    /**
-     * Replace all state with the project and resources in the given project
-     * bundle.
-     * @param {maker.ProjectBundle<TState>} bundle
-     */
-    loadBundle(bundle: maker.ProjectBundle<TState>): Promise<void>;
-    copyFrom(other: any): Promise<void>;
-    /**
-     * Replace all state by copying just the present and dependent resources
-     * from another state manager.
-     * @param {maker.StateManager<TState>} other
-     */
-    copyPresentFrom(other: any): Promise<void>;
-    /**
-     * Copy the present state and dependent resources into a project bundle.
-     * @returns {Promise<maker.ProjectBundle<TState>>}
-     */
-    makeBundle(): Promise<maker.ProjectBundle<TState>>;
-    /**
-     * Save the current state as a checkpoint in history that can be returned to
-     * with undo/redo.
-     */
-    makeCheckpoint(): void;
-    /**
-     * Dispatch the change event signalling that the present state has been
-     * updated.
-     */
-    changed(): void;
-    /**
-     * Discard all resources that are no longer required accord to the manifest
-     * function.
-     */
-    pruneResources(): void;
-    /**
-     * Make a history checkpoint, replace the current state with a forked
-     * version via callback, and then dispatch the change event.
-     * @param {(data: TState) => Promise} action
-     */
-    makeChange(action: (data: TState) => Promise<any>): Promise<void>;
-    /**
-     * Revert the state to the previous checkpoint in history.
-     */
-    undo(): void;
-    /**
-     * Return the state to the most recently undone checkpoint in history.
-     */
-    redo(): void;
-    addEventListener(
-      type: string,
-      callback: EventListenerOrEventListenerObject,
-      options?: boolean | AddEventListenerOptions
-    ): void;
-    dispatchEvent(event: Event): boolean;
-    removeEventListener(
-      type: string,
-      callback: EventListenerOrEventListenerObject,
-      options?: boolean | EventListenerOptions
-    ): void;
-  }): Promise<void>;
+  copyFrom(other: StateManager<TState>): Promise<void>;
   /**
    * Replace all state by copying just the present and dependent resources
    * from another state manager.
    * @param {maker.StateManager<TState>} other
    */
-  copyPresentFrom(other: {
-    /** @type {maker.ManifestFunction<TState>} */
-    getManifest: maker.ManifestFunction<TState>;
-    resources: {
-      lastId: number;
-      /** @type {Map<string, { type: string, instance: any }>} */
-      resources: Map<
-        string,
-        {
-          type: string;
-          instance: any;
-        }
-      >;
-      /**
-       * Generate a new unique id for a resource.
-       * @returns {string}
-       */
-      generateId(): string;
-      /**
-       * Clear all resources.
-       */
-      clear(): void;
-      /**
-       * Get the resource instance with the given id.
-       * @param {string} id
-       * @returns {any}
-       */
-      get(id: string): any;
-      /**
-       * Add a resource instance at a specific id.
-       * @param {string} id
-       * @param {any} instance
-       * @param {string} type
-       */
-      set(id: string, instance: any, type: string): void;
-      /**
-       * Add an instance as a new resource and return its new id.
-       * @param {any} instance
-       * @param {string} type
-       * @returns {string}
-       */
-      add(instance: any, type: string): string;
-      /**
-       * Copy the existing resource with the given id and add it as a new resource.
-       * @param {string} id
-       * @returns
-       */
-      fork(id: string): Promise<{
-        id: string;
-        instance: any;
-      }>;
-      /**
-       * Discard all resources except those at the ids given.
-       * @param {Iterable<string>} keepIds
-       */
-      prune(keepIds: Iterable<string>): void;
-      /**
-       * Copy all resources from another resource manager.
-       * @param {maker.ResourceManager} other
-       */
-      copyFrom(other: any): Promise<any>;
-      /**
-       * Save all resources in an object mapping id to type and save data.
-       * @param {Iterable<string>} ids
-       * @returns {Promise<maker.ResourceBundle>}
-       */
-      save(ids: Iterable<string>): Promise<{
-        [x: string]: ResourceData;
-      }>;
-      /**
-       * Load all resources from the given bundle.
-       * @param {maker.ResourceBundle} bundle
-       */
-      load(bundle: { [x: string]: ResourceData }): Promise<any>;
-    };
-    /** @type {TState[]} */
-    history: TState[];
-    index: number;
-    historyLimit: number;
-    /**
-     * The present state in history.
-     */
-    readonly present: TState;
-    /**
-     * Is there any edit history to undo to?
-     */
-    readonly canUndo: boolean;
-    /**
-     * Are there any undone edits to redo?
-     */
-    readonly canRedo: boolean;
-    /**
-     * Replace all state with the project and resources in the given project
-     * bundle.
-     * @param {maker.ProjectBundle<TState>} bundle
-     */
-    loadBundle(bundle: maker.ProjectBundle<TState>): Promise<void>;
-    /**
-     * Replace all state by copying from another state manager.
-     * @param {maker.StateManager<TState>} other
-     */
-    copyFrom(other: any): Promise<void>;
-    copyPresentFrom(other: any): Promise<void>;
-    /**
-     * Copy the present state and dependent resources into a project bundle.
-     * @returns {Promise<maker.ProjectBundle<TState>>}
-     */
-    makeBundle(): Promise<maker.ProjectBundle<TState>>;
-    /**
-     * Save the current state as a checkpoint in history that can be returned to
-     * with undo/redo.
-     */
-    makeCheckpoint(): void;
-    /**
-     * Dispatch the change event signalling that the present state has been
-     * updated.
-     */
-    changed(): void;
-    /**
-     * Discard all resources that are no longer required accord to the manifest
-     * function.
-     */
-    pruneResources(): void;
-    /**
-     * Make a history checkpoint, replace the current state with a forked
-     * version via callback, and then dispatch the change event.
-     * @param {(data: TState) => Promise} action
-     */
-    makeChange(action: (data: TState) => Promise<any>): Promise<void>;
-    /**
-     * Revert the state to the previous checkpoint in history.
-     */
-    undo(): void;
-    /**
-     * Return the state to the most recently undone checkpoint in history.
-     */
-    redo(): void;
-    addEventListener(
-      type: string,
-      callback: EventListenerOrEventListenerObject,
-      options?: boolean | AddEventListenerOptions
-    ): void;
-    dispatchEvent(event: Event): boolean;
-    removeEventListener(
-      type: string,
-      callback: EventListenerOrEventListenerObject,
-      options?: boolean | EventListenerOptions
-    ): void;
-  }): Promise<void>;
+  copyPresentFrom(other: StateManager<TState>): Promise<void>;
   /**
    * Copy the present state and dependent resources into a project bundle.
    * @returns {Promise<maker.ProjectBundle<TState>>}
@@ -1855,118 +1558,15 @@ declare const TILES_PAGE: CanvasRenderingContext2D;
 declare const BACKG_PAGE_D: CanvasRenderingContext2D;
 declare const COLOR_PAGE_D: CanvasRenderingContext2D;
 declare const TILES_PAGE_D: CanvasRenderingContext2D;
+interface ParagraphHandlerContext {
+  tags: Array<string>;
+  paragraphText: string;
+  sayStyle: Partial<DialogueOptions>;
+}
 declare class BipsiPlayback extends EventTarget {
   constructor(font: any);
-  stateManager: {
-    getManifest: maker.ManifestFunction<BipsiDataProject>;
-    resources: {
-      lastId: number;
-      resources: Map<
-        string,
-        {
-          type: string;
-          instance: any;
-        }
-      >;
-      generateId(): string;
-      clear(): void;
-      get(id: string): any;
-      set(id: string, instance: any, type: string): void;
-      add(instance: any, type: string): string;
-      fork(id: string): Promise<{
-        id: string;
-        instance: any;
-      }>;
-      prune(keepIds: Iterable<string>): void;
-      copyFrom(other: any): Promise<any>;
-      save(ids: Iterable<string>): Promise<{
-        [x: string]: ResourceData;
-      }>;
-      load(bundle: { [x: string]: ResourceData }): Promise<any>;
-    };
-    history: BipsiDataProject[];
-    index: number;
-    historyLimit: number;
-    readonly present: BipsiDataProject;
-    readonly canUndo: boolean;
-    readonly canRedo: boolean;
-    loadBundle(bundle: maker.ProjectBundle<BipsiDataProject>): Promise<void>;
-    copyFrom(other: any): Promise<void>;
-    copyPresentFrom(other: any): Promise<void>;
-    makeBundle(): Promise<maker.ProjectBundle<BipsiDataProject>>;
-    makeCheckpoint(): void;
-    changed(): void;
-    pruneResources(): void;
-    makeChange(action: (data: BipsiDataProject) => Promise<any>): Promise<void>;
-    undo(): void;
-    redo(): void;
-    addEventListener(
-      type: string,
-      callback: EventListenerOrEventListenerObject,
-      options?: boolean | AddEventListenerOptions
-    ): void;
-    dispatchEvent(event: Event): boolean;
-    removeEventListener(
-      type: string,
-      callback: EventListenerOrEventListenerObject,
-      options?: boolean | EventListenerOptions
-    ): void;
-  };
-  stateBackup: {
-    getManifest: maker.ManifestFunction<BipsiDataProject>;
-    resources: {
-      lastId: number;
-      resources: Map<
-        string,
-        {
-          type: string;
-          instance: any;
-        }
-      >;
-      generateId(): string;
-      clear(): void;
-      get(id: string): any;
-      set(id: string, instance: any, type: string): void;
-      add(instance: any, type: string): string;
-      fork(id: string): Promise<{
-        id: string;
-        instance: any;
-      }>;
-      prune(keepIds: Iterable<string>): void;
-      copyFrom(other: any): Promise<any>;
-      save(ids: Iterable<string>): Promise<{
-        [x: string]: ResourceData;
-      }>;
-      load(bundle: { [x: string]: ResourceData }): Promise<any>;
-    };
-    history: BipsiDataProject[];
-    index: number;
-    historyLimit: number;
-    readonly present: BipsiDataProject;
-    readonly canUndo: boolean;
-    readonly canRedo: boolean;
-    loadBundle(bundle: maker.ProjectBundle<BipsiDataProject>): Promise<void>;
-    copyFrom(other: any): Promise<void>;
-    copyPresentFrom(other: any): Promise<void>;
-    makeBundle(): Promise<maker.ProjectBundle<BipsiDataProject>>;
-    makeCheckpoint(): void;
-    changed(): void;
-    pruneResources(): void;
-    makeChange(action: (data: BipsiDataProject) => Promise<any>): Promise<void>;
-    undo(): void;
-    redo(): void;
-    addEventListener(
-      type: string,
-      callback: EventListenerOrEventListenerObject,
-      options?: boolean | AddEventListenerOptions
-    ): void;
-    dispatchEvent(event: Event): boolean;
-    removeEventListener(
-      type: string,
-      callback: EventListenerOrEventListenerObject,
-      options?: boolean | EventListenerOptions
-    ): void;
-  };
+  stateManager: StateManager<BipsiDataProject>;
+  stateBackup: StateManager<BipsiDataProject>;
   rendering: CanvasRenderingContext2D;
   font: any;
   dialoguePlayback: DialoguePlayback;
@@ -1995,61 +1595,7 @@ declare class BipsiPlayback extends EventTarget {
   /**
    * @param {maker.StateManager<BipsiDataProject>} stateManager
    */
-  copyFrom(stateManager: {
-    getManifest: maker.ManifestFunction<BipsiDataProject>;
-    resources: {
-      lastId: number;
-      resources: Map<
-        string,
-        {
-          type: string;
-          instance: any;
-        }
-      >;
-      generateId(): string;
-      clear(): void;
-      get(id: string): any;
-      set(id: string, instance: any, type: string): void;
-      add(instance: any, type: string): string;
-      fork(id: string): Promise<{
-        id: string;
-        instance: any;
-      }>;
-      prune(keepIds: Iterable<string>): void;
-      copyFrom(other: any): Promise<any>;
-      save(ids: Iterable<string>): Promise<{
-        [x: string]: ResourceData;
-      }>;
-      load(bundle: { [x: string]: ResourceData }): Promise<any>;
-    };
-    history: BipsiDataProject[];
-    index: number;
-    historyLimit: number;
-    readonly present: BipsiDataProject;
-    readonly canUndo: boolean;
-    readonly canRedo: boolean;
-    loadBundle(bundle: maker.ProjectBundle<BipsiDataProject>): Promise<void>;
-    copyFrom(other: any): Promise<void>;
-    copyPresentFrom(other: any): Promise<void>;
-    makeBundle(): Promise<maker.ProjectBundle<BipsiDataProject>>;
-    makeCheckpoint(): void;
-    changed(): void;
-    pruneResources(): void;
-    makeChange(action: (data: BipsiDataProject) => Promise<any>): Promise<void>;
-    undo(): void;
-    redo(): void;
-    addEventListener(
-      type: string,
-      callback: EventListenerOrEventListenerObject,
-      options?: boolean | AddEventListenerOptions
-    ): void;
-    dispatchEvent(event: Event): boolean;
-    removeEventListener(
-      type: string,
-      callback: EventListenerOrEventListenerObject,
-      options?: boolean | EventListenerOptions
-    ): void;
-  }): Promise<void>;
+  copyFrom(stateManager: StateManager<BipsiDataProject>): Promise<void>;
   /**
    * @param {maker.ProjectBundle<BipsiDataProject>} bundle
    */
@@ -2071,6 +1617,15 @@ declare class BipsiPlayback extends EventTarget {
     options: any
   ): Promise<void>;
   getSayStyle(character: any, style: any): any;
+  static paragraphHandlers: Array<
+    (
+      this: BipsiPlayback,
+      context: ParagraphHandlerContext
+    ) => void | boolean | Promise<void | boolean>
+  >;
+  runParagraphHandlers(
+    context: ParagraphHandlerContext
+  ): Promise<void | boolean>;
   continueStory(EVENT: any): any;
   update(dt: any): void;
   render(frame?: any): void;
@@ -2741,62 +2296,7 @@ declare class BipsiEditor extends EventTarget {
   constructor(font: any);
   unsavedChanges: boolean;
   ready: boolean;
-  /** @type {maker.StateManager<BipsiDataProject>} */
-  stateManager: {
-    getManifest: maker.ManifestFunction<BipsiDataProject>;
-    resources: {
-      lastId: number;
-      resources: Map<
-        string,
-        {
-          type: string;
-          instance: any;
-        }
-      >;
-      generateId(): string;
-      clear(): void;
-      get(id: string): any;
-      set(id: string, instance: any, type: string): void;
-      add(instance: any, type: string): string;
-      fork(id: string): Promise<{
-        id: string;
-        instance: any;
-      }>;
-      prune(keepIds: Iterable<string>): void;
-      copyFrom(other: any): Promise<any>;
-      save(ids: Iterable<string>): Promise<{
-        [x: string]: ResourceData;
-      }>;
-      load(bundle: { [x: string]: ResourceData }): Promise<any>;
-    };
-    history: BipsiDataProject[];
-    index: number;
-    historyLimit: number;
-    readonly present: BipsiDataProject;
-    readonly canUndo: boolean;
-    readonly canRedo: boolean;
-    loadBundle(bundle: maker.ProjectBundle<BipsiDataProject>): Promise<void>;
-    copyFrom(other: any): Promise<void>;
-    copyPresentFrom(other: any): Promise<void>;
-    makeBundle(): Promise<maker.ProjectBundle<BipsiDataProject>>;
-    makeCheckpoint(): void;
-    changed(): void;
-    pruneResources(): void;
-    makeChange(action: (data: BipsiDataProject) => Promise<any>): Promise<void>;
-    undo(): void;
-    redo(): void;
-    addEventListener(
-      type: string,
-      callback: EventListenerOrEventListenerObject,
-      options?: boolean | AddEventListenerOptions
-    ): void;
-    dispatchEvent(event: Event): boolean;
-    removeEventListener(
-      type: string,
-      callback: EventListenerOrEventListenerObject,
-      options?: boolean | EventListenerOptions
-    ): void;
-  };
+  stateManager: StateManager<BipsiDataProject>;
   /** @type {Object.<string, CanvasRenderingContext2D>} */
   renderings: {
     [x: string]: CanvasRenderingContext2D;
@@ -3168,6 +2668,7 @@ declare class IndexedItemPool {
 type SF = typeof SCRIPTING_FUNCTIONS;
 interface ScriptingThis extends SF {
   EVENT: BipsiDataEvent;
+  PLAYBACK: BipsiPlayback;
   // TODO: more
 }
 declare const CONFIG: BipsiDataEvent;
