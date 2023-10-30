@@ -66,7 +66,7 @@ playerContainer.id = "player-container";
 backgroundContainer.append(playerContainer);
 // Move the player there
 playerContainer.append(document.getElementById("player"));
-let playerInBGSpace = {
+let playerBBox = {
     left: 0,
     top: 0,
     width: 0,
@@ -78,16 +78,24 @@ wrap.after(window, "start", () => {
     if (glazyCanvas) {
         document.getElementById("player").append(glazyCanvas);
     }
-    playerInBGSpace = {
-        ...playerInBGSpace,
-        ...FIELD(CONFIG, "player-container-bbox", "json"),
-    };
-    const imageId = FIELD(CONFIG, "image", "file");
-    backgroundImage.src = PLAYBACK.getFileObjectURL(imageId);
     window.addEventListener("resize", positionContainer);
     backgroundImage.addEventListener("load", positionContainer);
-    positionContainer();
+    PLAYBACK.setBackground("image", "player-container-bbox");
 });
+BipsiPlayback.prototype.setBackground = function (imageField = "image", bboxField = "player-container-bbox") {
+    const imageId = FIELD(CONFIG, imageField, "file");
+    backgroundImage.src = PLAYBACK.getFileObjectURL(imageId);
+    playerBBox = {
+        left: 0,
+        top: 0,
+        width: 0,
+        height: 0,
+        ...FIELD(CONFIG, bboxField, "json"),
+    };
+};
+SCRIPTING_FUNCTIONS.SET_BACKGROUND = function (imageField, bboxField) {
+    return this.PLAYBACK.setBackground(imageField, bboxField);
+};
 function positionContainer() {
     // Find the background ratio
     const { naturalWidth, naturalHeight } = backgroundImage;
@@ -96,10 +104,10 @@ function positionContainer() {
     // Apply scale to bbox
     const { clientWidth, clientHeight } = backgroundContainer;
     const bgScale = Math.min(clientWidth / naturalWidth, clientHeight / naturalHeight);
-    const containerTop = Math.round(bgScale * playerInBGSpace.top);
-    const containerLeft = Math.round(bgScale * playerInBGSpace.left);
-    const containerWidth = Math.round(bgScale * playerInBGSpace.width);
-    const containerHeight = Math.round(bgScale * playerInBGSpace.height);
+    const containerTop = Math.round(bgScale * playerBBox.top);
+    const containerLeft = Math.round(bgScale * playerBBox.left);
+    const containerWidth = Math.round(bgScale * playerBBox.width);
+    const containerHeight = Math.round(bgScale * playerBBox.height);
     Object.assign(playerContainer.style, {
         top: containerTop + "px",
         left: containerLeft + "px",
