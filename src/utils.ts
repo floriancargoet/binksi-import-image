@@ -81,9 +81,10 @@ export function getBooleanConfig(name: string, defaultValue = false) {
   return value;
 }
 
-export async function setBooleanConfig(name: string, value: boolean) {
-  await EDITOR.stateManager.makeChange(async (data) => {
-    const pluginEvent = findEventById(data, CONFIG.id);
-    replaceFields(pluginEvent, name, "json", value);
-  });
+export function setBooleanConfig(name: string, value: boolean) {
+  // We want a sync change so we rewrite makeChange
+  EDITOR.stateManager.makeCheckpoint();
+  const pluginEvent = findEventById(EDITOR.stateManager.present, CONFIG.id);
+  replaceFields(pluginEvent, name, "json", value);
+  EDITOR.stateManager.changed();
 }

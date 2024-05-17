@@ -16,7 +16,7 @@ if (EDITOR && !EDITOR.loadedEditorPlugins?.has(PLUGIN_NAME)) {
     setupEditorPlugin();
 }
 //! CODE_PLAYBACK
-BipsiPlayback.paragraphHandlers.unshift(async function handleVoiceover({ paragraphText, }) {
+BipsiPlayback.paragraphHandlers.unshift(async function handleVoiceover({ paragraphText }) {
     const matchVoiceover = paragraphText.match(/(VOICEOVER|BLOCKING_VOICEOVER)\(([^),]+),([^),]+)\)/);
     if (matchVoiceover) {
         const blocking = matchVoiceover[1] === "BLOCKING_VOICEOVER";

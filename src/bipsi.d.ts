@@ -2436,6 +2436,7 @@ declare class BipsiEditor extends EventTarget {
    */
   updateEditor(): Promise<void>;
   save(): Promise<void>;
+  refreshEditorPluginConfig(config: any): void;
 }
 /**
  * @param {string[]} palette

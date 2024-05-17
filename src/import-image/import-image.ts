@@ -1,8 +1,12 @@
-import { Options, importMap } from "./importMap";
+import "./full-color";
+import { importMap } from "./importMap";
 import { importTileset } from "./importTileset";
+import { importTiledTilesetAnimation, importTiledMap } from "./importTiled";
+import { createToggleWindow, getBooleanConfig, setBooleanConfig } from "../utils";
+
 import imageUp from "../../icons/image-up.svg";
+import jsonUp from "../../icons/json-up.svg";
 import caret from "../../icons/caret.svg";
-import { autoCloseToggledWindow } from "../utils";
 
 declare global {
   interface BipsiEditor {
@@ -13,12 +17,17 @@ declare global {
 //! CODE_EDITOR
 const PLUGIN_NAME = "import-image";
 
-//!CONFIG import-map-options (json) {"keepColors": false}
+//!CONFIG import-map-keep-colors (json) false
+//!CONFIG use-full-color (json) false
+//!CONFIG hide-color-tools (json) true
 
 function setupEditorPlugin() {
   // Prevent repeating this setup
   EDITOR.loadedEditorPlugins ??= new Set();
   EDITOR.loadedEditorPlugins.add(PLUGIN_NAME);
+
+  const useFullColor = getBooleanConfig("use-full-color");
+  const keepColors = getBooleanConfig("import-map-keep-colors");
 
   // Create a togglable window
   const importImageWindow = createToggleWindow({
@@ -27,26 +36,90 @@ function setupEditorPlugin() {
     inputTitle: "import image",
     inputName: "show-import-image",
     windowContent: `
-      <h3>import image as tileset</h3>
-      <div style="display:flex;flex-direction: row;">
-        <ul style="flex:1">
-          <li>image must be white with transparent background</li>
-          <li>image size must be a multiple of ${TILE_PX}.</li>
+      <style>
+        #import-image-window .block {
+          display: grid;
+          grid-template-columns: 1fr auto;
+          padding-bottom: 6px;
+          font-size: 14px;
+        }
+        #import-image-window hr {
+          width: 100%;
+          border-color: white;
+          margin: 0;
+          margin-bottom: 2px;
+        }
+        #import-image-window ul {
+          margin: 0;
+        }
+        #import-image-window .strike {
+          text-decoration: line-through;
+        }
+        #import-image-window button {
+          width: 68px;
+          height: 48px;
+        }
+        #import-image-window button span {
+          font-size: 10px;
+        }
+      </style>
+
+      <h3>import image as map</h3>
+      <div class="block">
+        <ul>
+        <li>image will be cut into rooms</li>
+        <li>tileset will be automatically generated</li>
+        <li class="keep-colors-strike">palettes will be automatically generated</li>
+          <li><label>
+            <input type="checkbox" name="keep-colors" ${keepColors ? "checked" : ""}/>
+            keep previous bipsi colors
+          </label></li>
         </ul>
-        <button name="import-tileset" title="import image as tileset" style="flex:none;width:64px;height:48px;">
-          <span style="font-size:10px">tileset</span>
+        <button name="import-image-map" title="import image as map">
+          <span>image map</span>
+          ${imageUp}
+        </button>
+      </div>
+      <hr />
+      <h3>import image as tileset</h3>
+      <div class="block">
+        <ul>
+          <li class="use-full-color-strike">image must be white with transparent background</li>
+          <li>image size must be a multiple of ${TILE_PX}.</li>
+          <li><label>
+            <input type="checkbox" name="use-full-color" ${useFullColor ? "checked" : ""}/>
+            use full color tiles <small>(disables color tools, relies on image colors)</small>
+          </label></li>
+        </ul>
+        <button name="import-image-tileset" title="import image as tileset">
+          <span>tileset</span>
           ${imageUp}
         </button>
       </div>
 
-      <h3>import image as map</h3>
-      <div style="display:flex;flex-direction: row;">
-        <ul style="flex:1">
-          <li>TODO</li>
+      <h3>import Tiled JSON tileset animation data</h3>
+      <div class="block">
+        <ul>
+          <li>import tiles animations from Tiled editor (.json)</li>
+          <li>timing will be ignored, only the sequence of tiles is considered</li>
+          <li><small><a target="_blank" href="https://doc.mapeditor.org/en/stable/manual/editing-tilesets/#tile-animation-editor">Tiled animation docs</a></small></li>
         </ul>
-        <button name="import-map" title="import image as map" style="flex:none;width:64px;height:48px;">
-          <span style="font-size:10px">map</span>
-          ${imageUp}
+        <button name="import-tiled-anim-tileset" title="import tileset animation">
+          <span>animation</span>
+          ${jsonUp}
+        </button>
+      </div>
+
+      <h3>import Tiled JSON map</h3>
+      <div class="block">
+        <ul>
+          <li>import map from Tiled editor (.json)</li>
+          <li>one layer per room</li>
+          <li><small><a target="_blank" href="https://doc.mapeditor.org/en/stable/reference/json-map-format/">Tiled JSON map docs</a></<small></li>
+        </ul>
+        <button name="import-tiled-map" title="import Tiled JSON map">
+          <span>tiled map</span>
+          ${jsonUp}
         </button>
       </div>`,
     toggleContent: `
@@ -54,91 +127,55 @@ function setupEditorPlugin() {
         ${caret}
       `,
   });
-  importImageWindow.window.style.height = "auto";
+  const w = importImageWindow.window;
+  w.style.height = "auto";
 
-  ONE("#controls").append(importImageWindow.window);
-  ONE("#draw-room-tab-controls .viewport-toolbar").append(
-    importImageWindow.button
-  );
+  ONE("#controls").append(w);
+  ONE("#draw-room-tab-controls .viewport-toolbar").append(importImageWindow.button);
+  const useFullColorCheckbox = ONE<HTMLInputElement>('[name="use-full-color"]', w);
+  const importImageTilesetButton = ONE('[name="import-image-tileset"]', w);
+  const importImageMapButton = ONE('[name="import-image-map"]', w);
+  const keepColorsCheckbox = ONE<HTMLInputElement>('[name="keep-colors"]', w);
+  const importTiledAnimButton = ONE('[name="import-tiled-anim-tileset"]', w);
+  const importTiledMapButton = ONE('[name="import-tiled-map"]', w);
 
-  const importImageButton = ONE(
-    '[name="import-tileset"]',
-    importImageWindow.window
-  );
-  const importMapButton = ONE('[name="import-map"]', importImageWindow.window);
-  EDITOR.roomPaintTool.tab(importImageWindow.button, "tile");
-  importImageButton.addEventListener("click", async () => {
-    await importTileset();
-    // Close window
-    importImageWindow.toggle.checked = false;
-  });
-  importMapButton.addEventListener("click", async () => {
-    let options: Partial<Options> = {};
-    try {
-      const rawOptions = FIELD(CONFIG, "import-map-options", "json");
-      if (rawOptions != null && typeof rawOptions === "object") {
-        options = rawOptions as Partial<Options>;
-      } else {
-        console.log("Incorrect import-map-options");
-      }
-    } catch (e) {
-      console.log("Incorrect import-map-options");
+  function updateStrikes() {
+    const useFullColor = getBooleanConfig("use-full-color");
+    for (const el of ALL(".use-full-color-strike", w)) {
+      el.classList.toggle("strike", useFullColor);
     }
-    await importMap(options);
-    // Close window
-    importImageWindow.toggle.checked = false;
+    const keepColors = getBooleanConfig("import-map-keep-colors");
+    for (const el of ALL(".keep-colors-strike", w)) {
+      el.classList.toggle("strike", keepColors);
+    }
+  }
+  useFullColorCheckbox.addEventListener("change", async () => {
+    await setBooleanConfig("use-full-color", useFullColorCheckbox.checked);
+    updateStrikes();
+  });
+  keepColorsCheckbox.addEventListener("change", async () => {
+    await setBooleanConfig("import-map-keep-colors", keepColorsCheckbox.checked);
+    updateStrikes();
+  });
+
+  EDITOR.roomPaintTool.tab(importImageWindow.button, "tile");
+  function click(button: HTMLElement, handler: () => Promise<void>) {
+    button.addEventListener("click", async () => {
+      await handler();
+      // Close window
+      importImageWindow.toggle.checked = false;
+    });
+  }
+  click(importImageTilesetButton, importTileset);
+  click(importTiledAnimButton, importTiledTilesetAnimation);
+  click(importTiledMapButton, importTiledMap);
+  click(importImageMapButton, async () => {
+    await importMap({
+      keepColors: getBooleanConfig("import-map-keep-colors"),
+    });
   });
 }
 
 if (!EDITOR.loadedEditorPlugins?.has(PLUGIN_NAME)) {
   setupEditorPlugin();
-}
-
-type ToggleWindowOptions = {
-  windowId: string;
-  toggleId: string;
-  inputTitle: string;
-  inputName: string;
-  windowContent: string;
-  toggleContent: string;
-};
-function createToggleWindow({
-  windowId,
-  toggleId,
-  inputName,
-  inputTitle,
-  toggleContent,
-  windowContent,
-}: ToggleWindowOptions) {
-  const windowEl = document.createElement("div");
-  windowEl.id = windowId;
-  windowEl.className = "popup-window";
-  windowEl.hidden = true;
-  windowEl.innerHTML = windowContent;
-
-  const toggleButtonEl = document.createElement("label");
-  toggleButtonEl.id = toggleId;
-  toggleButtonEl.className = "toggle picker-toggle";
-  toggleButtonEl.hidden = true;
-  toggleButtonEl.innerHTML = `
-    <input type="checkbox" name="${inputName}" title="${inputTitle}">
-    ${toggleContent}
-  `;
-
-  // bipsi's ui.toggle requires the element to be in the DOM
-  // so we directly use the CheckboxWrapper
-  const toggle = new CheckboxWrapper(
-    ALL(`[name="${inputName}"]`, toggleButtonEl) as Array<HTMLInputElement>
-  );
-
-  toggle?.addEventListener("change", () => {
-    windowEl.hidden = !toggle.checked;
-  });
-
-  autoCloseToggledWindow(windowEl, toggle);
-  return {
-    window: windowEl,
-    button: toggleButtonEl,
-    toggle,
-  };
 }
