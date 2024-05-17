@@ -128,16 +128,10 @@ function positionContainer() {
   // Find the background ratio
   const { naturalWidth, naturalHeight } = backgroundImage;
   // Apply aspect-ratio to container
-  backgroundContainer.style.setProperty(
-    "--ratio",
-    String(naturalWidth / naturalHeight)
-  );
+  backgroundContainer.style.setProperty("--ratio", String(naturalWidth / naturalHeight));
   // Apply scale to bbox
   const { clientWidth, clientHeight } = backgroundContainer;
-  const bgScale = Math.min(
-    clientWidth / naturalWidth,
-    clientHeight / naturalHeight
-  );
+  const bgScale = Math.min(clientWidth / naturalWidth, clientHeight / naturalHeight);
   const containerTop = Math.round(bgScale * playerBBox.top);
   const containerLeft = Math.round(bgScale * playerBBox.left);
   const containerWidth = Math.round(bgScale * playerBBox.width);
@@ -150,9 +144,7 @@ function positionContainer() {
   });
 
   // Scale the player to fit the bbox (the deformation is by choice)
-  const playerCanvas = document.getElementById(
-    "player-canvas"
-  ) as HTMLCanvasElement;
+  const playerCanvas = document.getElementById("player-canvas") as HTMLCanvasElement;
   const player = document.getElementById("player")!;
   const scaleX = containerWidth / playerCanvas.width;
   const scaleY = containerHeight / playerCanvas.height;

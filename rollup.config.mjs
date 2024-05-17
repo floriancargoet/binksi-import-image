@@ -5,7 +5,9 @@ export default [
   {
     input: "src/import-image/import-image.ts",
     plugins: [
-      typescript(),
+      typescript({
+        abortOnError: false,
+      }),
       svgo({
         plugins: [
           {
@@ -31,7 +33,11 @@ export default [
   },
   {
     input: "src/voiceover-subtitles/voiceover-subtitles.ts",
-    plugins: [typescript()],
+    plugins: [
+      typescript({
+        abortOnError: false,
+      }),
+    ],
     output: [
       {
         file: `dist/voiceover-subtitles.js`,
@@ -41,7 +47,11 @@ export default [
   },
   {
     input: "src/background/background.ts",
-    plugins: [typescript()],
+    plugins: [
+      typescript({
+        abortOnError: false,
+      }),
+    ],
     output: [
       {
         file: `dist/background.js`,

@@ -9,10 +9,7 @@ declare global {
     queueVoiceOver(field: string, event: BipsiDataEvent): Promise<void>;
   }
   namespace SCRIPTING_FUNCTIONS {
-    export function PLAY_VO_SUB(
-      field: string,
-      event?: BipsiDataEvent
-    ): Promise<void>;
+    export function PLAY_VO_SUB(field: string, event?: BipsiDataEvent): Promise<void>;
     export function QUEUE_VO_SUB(field: string, event?: BipsiDataEvent): void;
   }
 }
@@ -41,12 +38,8 @@ if (EDITOR && !EDITOR.loadedEditorPlugins?.has(PLUGIN_NAME)) {
 
 //! CODE_PLAYBACK
 
-BipsiPlayback.paragraphHandlers.unshift(async function handleVoiceover({
-  paragraphText,
-}) {
-  const matchVoiceover = paragraphText.match(
-    /(VOICEOVER|BLOCKING_VOICEOVER)\(([^),]+),([^),]+)\)/
-  );
+BipsiPlayback.paragraphHandlers.unshift(async function handleVoiceover({ paragraphText }) {
+  const matchVoiceover = paragraphText.match(/(VOICEOVER|BLOCKING_VOICEOVER)\(([^),]+),([^),]+)\)/);
   if (matchVoiceover) {
     const blocking = matchVoiceover[1]! === "BLOCKING_VOICEOVER";
     const target = matchVoiceover[2]!.trim();
@@ -106,10 +99,7 @@ class Queue {
   }
 }
 
-BipsiPlayback.prototype.playVoiceOver = async function (
-  field: string,
-  event: BipsiDataEvent
-) {
+BipsiPlayback.prototype.playVoiceOver = async function (field: string, event: BipsiDataEvent) {
   const soundId = FIELD(event, field, "file");
   const duration = await getSoundDuration(soundId);
 
@@ -158,10 +148,7 @@ BipsiPlayback.prototype.playVoiceOver = async function (
 
 const voSubQueue = new Queue();
 
-BipsiPlayback.prototype.queueVoiceOver = async function (
-  field: string,
-  event: BipsiDataEvent
-) {
+BipsiPlayback.prototype.queueVoiceOver = async function (field: string, event: BipsiDataEvent) {
   return new Promise<void>((resolve) => {
     voSubQueue.push(async () => {
       await this.playVoiceOver(field, event);

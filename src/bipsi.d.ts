@@ -90,10 +90,7 @@ declare function drawTile(
  * @param {number} frame
  * @returns {Map<number, number>}
  */
-declare function makeTileToFrameMap(
-  tiles: BipsiDataTile[],
-  frame: number
-): Map<number, number>;
+declare function makeTileToFrameMap(tiles: BipsiDataTile[], frame: number): Map<number, number>;
 /**
  * @param {CanvasRenderingContext2D} destination
  * @param {CanvasRenderingContext2D} tileset
@@ -159,11 +156,7 @@ declare function cycleMap(map: any[][], dx: number, dy: number): void;
  * @param {number} dx
  * @param {number} dy
  */
-declare function cycleEvents(
-  events: BipsiDataEvent[],
-  dx: number,
-  dy: number
-): void;
+declare function cycleEvents(events: BipsiDataEvent[], dx: number, dy: number): void;
 /**
  * @param {BipsiDataEvent[]} events
  * @param {number} x
@@ -197,19 +190,13 @@ declare function getRoomById(data: BipsiDataProject, id: number): BipsiDataRoom;
  * @param {number} id
  * @returns {BipsiDataPalette}
  */
-declare function getPaletteById(
-  data: BipsiDataProject,
-  id: number
-): BipsiDataPalette;
+declare function getPaletteById(data: BipsiDataProject, id: number): BipsiDataPalette;
 /**
  * @param {BipsiDataProject} data
  * @param {number} id
  * @returns {BipsiDataEvent}
  */
-declare function getEventById(
-  data: BipsiDataProject,
-  id: number
-): BipsiDataEvent;
+declare function getEventById(data: BipsiDataProject, id: number): BipsiDataEvent;
 /**
  * @param {BipsiDataProject} data
  * @param {number} id
@@ -233,10 +220,7 @@ declare function nextId(
  * @param {CanvasRenderingContext2D} tileset
  * @param {BipsiDataTile[]} tiles
  */
-declare function resizeTileset(
-  tileset: CanvasRenderingContext2D,
-  tiles: BipsiDataTile[]
-): void;
+declare function resizeTileset(tileset: CanvasRenderingContext2D, tiles: BipsiDataTile[]): void;
 declare const URL_PARAMS: URLSearchParams;
 declare const BIPSI_HD: string | true;
 declare const SAVE_SLOT: string;
@@ -325,10 +309,7 @@ type BipsiDataLocation = {
  * @param {number} height
  * @returns {CanvasRenderingContext2D}
  */
-declare function createRendering2D(
-  width: number,
-  height: number
-): CanvasRenderingContext2D;
+declare function createRendering2D(width: number, height: number): CanvasRenderingContext2D;
 /**
  * @param {CanvasRenderingContext2D} rendering
  * @param {string | CanvasGradient | CanvasPattern | undefined} fillStyle
@@ -388,10 +369,7 @@ declare function flipRendering2D(rendering: CanvasRenderingContext2D): void;
  * @param {CanvasRenderingContext2D} rendering
  * @param {number} turns
  */
-declare function turnRendering2D(
-  rendering: CanvasRenderingContext2D,
-  turns?: number
-): void;
+declare function turnRendering2D(rendering: CanvasRenderingContext2D, turns?: number): void;
 /**
  * @callback pixelsAction
  * @param {Uint32Array} pixels
@@ -400,10 +378,7 @@ declare function turnRendering2D(
  * @param {CanvasRenderingContext2D} rendering
  * @param {pixelsAction} action
  */
-declare function withPixels(
-  rendering: CanvasRenderingContext2D,
-  action: pixelsAction
-): void;
+declare function withPixels(rendering: CanvasRenderingContext2D, action: pixelsAction): void;
 /**
  * @param {CanvasRenderingContext2D} mask
  * @param {string} style
@@ -515,17 +490,12 @@ declare function RGBToUint32(rgb: any): number;
  * @param {CanvasRenderingContext2D} rendering
  * @param {string[]} palette
  */
-declare function recolorToPalette(
-  rendering: CanvasRenderingContext2D,
-  palette: string[]
-): void;
+declare function recolorToPalette(rendering: CanvasRenderingContext2D, palette: string[]): void;
 /**
  * Copy image contents to a new canvas rendering context.
  * @param {HTMLImageElement} image
  */
-declare function imageToRendering2D(
-  image: HTMLImageElement
-): CanvasRenderingContext2D;
+declare function imageToRendering2D(image: HTMLImageElement): CanvasRenderingContext2D;
 /**
  * Create an html image from a given src (probably a datauri).
  * @param {string} src
@@ -612,9 +582,7 @@ declare function generateRoomPreviewURL(
  * @param {BipsiPlayback} playback
  * @returns {Promise<[string, number][]>}
  */
-declare function recordFrames(
-  playback: BipsiPlayback
-): Promise<[string, number][]>;
+declare function recordFrames(playback: BipsiPlayback): Promise<[string, number][]>;
 /**
  * @param {EventTarget} target
  * @param {string} event
@@ -797,10 +765,7 @@ declare namespace maker {
    * @param {boolean} multiple
    * @returns {Promise<File[]>}
    */
-  export function pickFiles(
-    accept?: string,
-    multiple?: boolean
-  ): Promise<File[]>;
+  export function pickFiles(accept?: string, multiple?: boolean): Promise<File[]>;
   /**
    * Read plain text from a file.
    * @param {File} file
@@ -962,17 +927,14 @@ declare class ButtonAction extends EventTarget {
  * @param {ParentNode} element
  * @returns {HTMLElement}
  */
-declare function ONE(query: string, element?: ParentNode): HTMLElement;
+declare function ONE<E = HTMLElement>(query: string, element?: ParentNode): E;
 /**
  * Get all children elements matching CSS selector.
  * @param {string} query
  * @param {HTMLElement | Document} element
  * @returns {HTMLElement[]}
  */
-declare function ALL(
-  query: string,
-  element?: HTMLElement | Document
-): HTMLElement[];
+declare function ALL(query: string, element?: HTMLElement | Document): HTMLElement[];
 declare const urlAlphabet: "ModuleSymbhasOwnPr-0123456789ABCDEFGHNRVfgctiUvz_KqYTJkLxpZXIjQW";
 /**
  * Deep copy an object by serializing it to json and parsing it again.
@@ -1346,10 +1308,7 @@ declare function fitCanvasToParent(canvas: HTMLCanvasElement): void;
 /**
  * @param {HTMLElement} element
  */
-declare function scaleElementToParent(
-  element: HTMLElement,
-  margin?: number
-): number;
+declare function scaleElementToParent(element: HTMLElement, margin?: number): number;
 /**
  * @param {any} message
  * @param {string} origin
@@ -1365,11 +1324,7 @@ declare function eventIsTagged(event: BipsiDataEvent, key: string): boolean;
  * @param {number} x
  * @param {number} y
  */
-declare function cellIsSolid(
-  room: BipsiDataRoom,
-  x: number,
-  y: number
-): boolean;
+declare function cellIsSolid(room: BipsiDataRoom, x: number, y: number): boolean;
 /**
  *
  * @param {BipsiDataEvent} event
@@ -1392,11 +1347,7 @@ declare function allTags(event: BipsiDataEvent): string[];
  * @param {string} name
  * @param {string} type
  */
-declare function oneField(
-  event: BipsiDataEvent,
-  name: string,
-  type?: string
-): any;
+declare function oneField(event: BipsiDataEvent, name: string, type?: string): any;
 /**
  * @param {BipsiDataProject} data
  */
@@ -1405,10 +1356,7 @@ declare function allEvents(data: BipsiDataProject): any;
  * @param {BipsiDataProject} data
  * @param {BipsiDataEvent} event
  */
-declare function roomFromEvent(
-  data: BipsiDataProject,
-  event: BipsiDataEvent
-): any;
+declare function roomFromEvent(data: BipsiDataProject, event: BipsiDataEvent): any;
 /**
  * @param {BipsiDataProject} data
  * @param {BipsiDataLocation} location
@@ -1451,10 +1399,7 @@ declare function moveEventById(
  * @param {BipsiDataProject} data
  * @param {BipsiDataEvent} event
  */
-declare function removeEvent(
-  data: BipsiDataProject,
-  event: BipsiDataEvent
-): void;
+declare function removeEvent(data: BipsiDataProject, event: BipsiDataEvent): void;
 declare function shuffleArray(array: any): void;
 /**
  * @param {BipsiDataProject} data
@@ -1467,17 +1412,28 @@ declare function findEventByTag(data: any, tag: any): any;
  * @param {BipsiDataEvent} event
  */
 declare function allEventTags(event: BipsiDataEvent): string[];
-declare function drawRecolorLayer(destination: any, render: any): void;
-declare function drawRecolorLayerDynamic(destination: any, render: any): void;
+declare function drawRecolorLayer(
+  destination: CanvasRenderingContext2D,
+  render: (
+    back: CanvasRenderingContext2D,
+    color: CanvasRenderingContext2D,
+    tiles: CanvasRenderingContext2D
+  ) => void
+): void;
+declare function drawRecolorLayerDynamic(
+  destination: CanvasRenderingContext2D,
+  render: (
+    back: CanvasRenderingContext2D,
+    color: CanvasRenderingContext2D,
+    tiles: CanvasRenderingContext2D
+  ) => void
+): void;
 /**
  * @param {BipsiPlayback} playback
  * @param {BipsiDataEvent} event
  * @returns {Promise}
  */
-declare function standardEventTouch(
-  playback: BipsiPlayback,
-  event: BipsiDataEvent
-): Promise<any>;
+declare function standardEventTouch(playback: BipsiPlayback, event: BipsiDataEvent): Promise<any>;
 declare function sample(playback: any, id: any, type: any, values: any): any;
 declare function makeShuffleIterator(values: any): {};
 declare function makeCycleIterator(values: any): {};
@@ -1488,10 +1444,7 @@ declare function makeSequenceOnceIterator(values: any): {};
  * @param {BipsiDataEvent} event
  * @returns {Promise}
  */
-declare function runEventRemove(
-  playback: BipsiPlayback,
-  event: BipsiDataEvent
-): Promise<any>;
+declare function runEventRemove(playback: BipsiPlayback, event: BipsiDataEvent): Promise<any>;
 declare function fakedownToTag(text: any, fd: any, tag: any): any;
 declare function parseFakedown(text: any): any;
 /**
@@ -1499,11 +1452,7 @@ declare function parseFakedown(text: any): any;
  * @param {string} name
  * @param {string?} type
  */
-declare function clearFields(
-  event: BipsiDataEvent,
-  name: string,
-  type?: string | null
-): void;
+declare function clearFields(event: BipsiDataEvent, name: string, type?: string | null): void;
 /**
  * @param {BipsiDataEvent} event
  * @param {string} name
@@ -1610,12 +1559,7 @@ declare class BipsiPlayback extends EventTarget {
   libraryId: any;
   spawnAt(target: any, event: any): Promise<void>;
   showPortrait(character: any, sentiment: any, options: any): Promise<boolean>;
-  sayWithPortrait(
-    text: any,
-    character: any,
-    sentiment: any,
-    options: any
-  ): Promise<void>;
+  sayWithPortrait(text: any, character: any, sentiment: any, options: any): Promise<void>;
   getSayStyle(character: any, style: any): any;
   static paragraphHandlers: Array<
     (
@@ -1623,9 +1567,7 @@ declare class BipsiPlayback extends EventTarget {
       context: ParagraphHandlerContext
     ) => void | boolean | Promise<void | boolean>
   >;
-  runParagraphHandlers(
-    context: ParagraphHandlerContext
-  ): Promise<void | boolean>;
+  runParagraphHandlers(context: ParagraphHandlerContext): Promise<void | boolean>;
   continueStory(EVENT: any): any;
   update(dt: any): void;
   render(frame?: any): void;
@@ -1650,13 +1592,7 @@ declare class BipsiPlayback extends EventTarget {
   stopMusic(): void;
   setBackground(image: any): void;
   background: any;
-  showImage(
-    imageID: any,
-    fileIDs: any,
-    layer: any,
-    x: any,
-    y: any
-  ): Promise<void>;
+  showImage(imageID: any, fileIDs: any, layer: any, x: any, y: any): Promise<void>;
   hideImage(imageID: any): void;
   showError(text: any): void;
   getActivePalette(): BipsiDataPalette;
@@ -1691,13 +1627,7 @@ declare namespace SCRIPTING_FUNCTIONS {
   export function FIND_EVENT(tag: any): any;
   export function PLAY_MUSIC(file: any): void;
   export function STOP_MUSIC(): void;
-  export function SHOW_IMAGE(
-    id: any,
-    files: any,
-    layer: any,
-    x: any,
-    y: any
-  ): void;
+  export function SHOW_IMAGE(id: any, files: any, layer: any, x: any, y: any): void;
   export function HIDE_IMAGE(id: any): void;
   export function FILE_TEXT(file: any): any;
   export function FIELD_OR_LIBRARY(field: any, event?: any): any;
@@ -1706,12 +1636,7 @@ declare namespace SCRIPTING_FUNCTIONS {
   export function MOVE(event: any, location: any): void;
   export { FIELD };
   export { FIELDS };
-  export function SET_FIELDS(
-    event: any,
-    name: any,
-    type: any,
-    ...values: any[]
-  ): void;
+  export function SET_FIELDS(event: any, name: any, type: any, ...values: any[]): void;
   export function $FIELD(name: any, type?: any, event?: any): any;
   export function $FIELDS(name: any, type?: any, event?: any): any[];
   export function $SET_FIELDS(name: any, type?: any, ...values: any[]): void;
@@ -1725,18 +1650,8 @@ declare namespace SCRIPTING_FUNCTIONS {
   export function $REMOVE(event?: any): void;
   export function SET_GRAPHIC(event: any, tile: any): void;
   export function $SET_GRAPHIC(tile: any, event?: any): void;
-  export function WALK(
-    event: any,
-    sequence: any,
-    delay?: number,
-    wait?: number
-  ): Promise<void>;
-  export function $WALK(
-    sequence: any,
-    delay?: number,
-    wait?: number,
-    event?: any
-  ): Promise<void>;
+  export function WALK(event: any, sequence: any, delay?: number, wait?: number): Promise<void>;
+  export function $WALK(sequence: any, delay?: number, wait?: number, event?: any): Promise<void>;
   export function GET(key: any, fallback?: any, target?: any): any;
   export function SET(key: any, value: any, target?: any): void;
   export function $GET(key: any, fallback?: any, target?: any): any;
@@ -1758,11 +1673,7 @@ declare namespace SCRIPTING_FUNCTIONS {
 }
 declare function preload(): Promise<void>;
 declare function startEditor(font: any): Promise<BipsiEditor>;
-declare function makePlayback(
-  font: any,
-  bundle: any,
-  story: any
-): Promise<BipsiPlayback>;
+declare function makePlayback(font: any, bundle: any, story: any): Promise<BipsiPlayback>;
 declare function start(): Promise<void>;
 declare let PLAYBACK: BipsiPlayback;
 declare let EDITOR: BipsiEditor;
@@ -1898,10 +1809,7 @@ declare function commandsToPages(
  * @param {*} commands
  * @param {BlitsyTextRenderOptions} options
  */
-declare function commandsBreakLongSpans(
-  commands: any,
-  options: BlitsyTextRenderOptions
-): void;
+declare function commandsBreakLongSpans(commands: any, options: BlitsyTextRenderOptions): void;
 /**
  * @param {BlitsyFont} font
  * @param {string} line
@@ -1965,11 +1873,25 @@ type BlitsyTextRenderOptions = {
   lineWidth: number;
 };
 type BlitsyPage = BlitsyGlyph[];
+type WrappedCallback<O, M> = (this: O, ...args: Parameters<O[M]>) => any;
+type SpliceCallback<O, M> = (
+  this: O,
+  original: O[M],
+  ...args: Parameters<O[M]>
+) => ReturnType<O[M]>;
 declare namespace wrap {
-  function before(object: any, method: any, callback: any): void;
-  function after(object: any, method: any, callback: any): void;
-  function replace(object: any, method: any, callback: any): void;
-  function splice(object: any, method: any, callback: any): void;
+  function before<O, M extends keyof O>(
+    object: O,
+    method: M,
+    callback: WrappedCallback<O, M>
+  ): void;
+  function after<O, M extends keyof O>(object: O, method: M, callback: WrappedCallback<O, M>): void;
+  function replace<O, M extends keyof O>(
+    object: O,
+    method: M,
+    callback: WrappedCallback<O, M>
+  ): void;
+  function splice<O, M extends keyof O>(object: O, method: M, callback: SpliceCallback<O, M>): void;
 }
 declare class ColorSelectItem {
   constructor(root: any, inputs: any);
@@ -2011,11 +1933,7 @@ declare function makeBlankPalette(id: any): {
   id: any;
   colors: string[];
 };
-declare function generateGrid(
-  width: any,
-  height: any,
-  gap: any
-): CanvasRenderingContext2D;
+declare function generateGrid(width: any, height: any, gap: any): CanvasRenderingContext2D;
 /**
  * Update the given bipsi project data so that it's valid for this current
  * version of bipsi.
@@ -2029,10 +1947,7 @@ declare function makeCanvasRounder(
   x: number;
   y: number;
 };
-declare function generateColorWheel(
-  width: any,
-  height: any
-): CanvasRenderingContext2D;
+declare function generateColorWheel(width: any, height: any): CanvasRenderingContext2D;
 declare function prepareTemplate(element: any): {
   parent: any;
   element: any;
@@ -2294,6 +2209,7 @@ declare class BipsiEditor extends EventTarget {
    * but a class is easy syntax for wrapping functions and state together 🤷‍♀️
    */
   constructor(font: any);
+  pendingTileSelect?: number;
   unsavedChanges: boolean;
   ready: boolean;
   stateManager: StateManager<BipsiDataProject>;
@@ -2467,9 +2383,7 @@ declare class BipsiEditor extends EventTarget {
   /**
    * @param {(CanvasRenderingContext2D) => void} process
    */
-  processSelectedTile(
-    process: (CanvasRenderingContext2D: any) => void
-  ): Promise<void>;
+  processSelectedTile(process: (CanvasRenderingContext2D: any) => void): Promise<void>;
   copySelectedTileFrame(): Promise<void>;
   copiedTileFrame: CanvasRenderingContext2D;
   pasteSelectedTileFrame(): Promise<void>;
@@ -2605,11 +2519,7 @@ declare class RoomSelect {
     }[]
   ): void;
 }
-declare function debounce(
-  func: any,
-  wait: any,
-  immediate: any
-): (...args: any[]) => void;
+declare function debounce(func: any, wait: any, immediate: any): (...args: any[]) => void;
 declare class StoryEditor {
   /**
    * @param {BipsiEditor} editor
