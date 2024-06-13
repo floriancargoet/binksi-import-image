@@ -1,4 +1,4 @@
-import { U32ColorToHex } from "../utils";
+import { U32ColorToHex } from "../all-utils";
 
 //! CODE_EDITOR
 
@@ -28,9 +28,7 @@ class ImportedMap {
     // Check the dimensions match a whole number of rooms.
     const roomSize = 16 * TILE_PX;
     if (img.height % roomSize !== 0 || img.width % roomSize !== 0) {
-      throw new Error(
-        `The dimensions of the map must be a multiple of ${roomSize}.`
-      );
+      throw new Error(`The dimensions of the map must be a multiple of ${roomSize}.`);
     }
     // Create rooms and tiles.
     const roomCols = img.width / roomSize;
@@ -205,8 +203,7 @@ export async function importMap(options?: Partial<Options>) {
       if (
         overwrittenRoom &&
         (fullOptions.keepColors === true ||
-          (Array.isArray(fullOptions.keepColors) &&
-            fullOptions.keepColors.includes(i)))
+          (Array.isArray(fullOptions.keepColors) && fullOptions.keepColors.includes(i)))
       ) {
         bipsiRoom.foremap = overwrittenRoom.foremap;
         bipsiRoom.backmap = overwrittenRoom.backmap;

@@ -1,5 +1,5 @@
 //! CODE_EDITOR
-//! CODE_EDITOR
+//! CODE_ALL_TYPES
 function U32ColorToRGBA(n) {
     const u32a = new Uint32Array([n]);
     const u8a = new Uint8ClampedArray(u32a.buffer);
@@ -9,45 +9,6 @@ function U32ColorToHex(n) {
     const [r, g, b] = U32ColorToRGBA(n);
     const h = ("000000" + (r * 256 * 256 + g * 256 + b).toString(16)).slice(-6);
     return "#" + h;
-}
-function autoCloseToggledWindow(windowElement, toggle) {
-    window.addEventListener("click", (event) => {
-        const target = event.target;
-        const ignore = windowElement.hidden ||
-            !event.isTrusted ||
-            windowElement.contains(target) ||
-            toggle.inputs.includes(target);
-        if (ignore)
-            return;
-        toggle.checked = false;
-    });
-}
-function createToggleWindow({ windowId, toggleId, inputName, inputTitle, toggleContent, windowContent, }) {
-    const windowEl = document.createElement("div");
-    windowEl.id = windowId;
-    windowEl.className = "popup-window";
-    windowEl.hidden = true;
-    windowEl.innerHTML = windowContent;
-    const toggleButtonEl = document.createElement("label");
-    toggleButtonEl.id = toggleId;
-    toggleButtonEl.className = "toggle picker-toggle";
-    toggleButtonEl.hidden = true;
-    toggleButtonEl.innerHTML = `
-      <input type="checkbox" name="${inputName}" title="${inputTitle}">
-      ${toggleContent}
-    `;
-    // bipsi's ui.toggle requires the element to be in the DOM
-    // so we directly use the CheckboxWrapper
-    const toggle = new CheckboxWrapper(ALL(`[name="${inputName}"]`, toggleButtonEl));
-    toggle?.addEventListener("change", () => {
-        windowEl.hidden = !toggle.checked;
-    });
-    autoCloseToggledWindow(windowEl, toggle);
-    return {
-        window: windowEl,
-        button: toggleButtonEl,
-        toggle,
-    };
 }
 function getBooleanConfig(name, defaultValue = false) {
     const value = FIELD(CONFIG, name, "json");
@@ -63,9 +24,10 @@ function setBooleanConfig(name, value) {
     EDITOR.stateManager.changed();
 }
 
-//! CODE_EDITOR
+//! CODE_ALL_TYPES
 let useFullColor = getBooleanConfig("use-full-color");
 let hideColorTools = useFullColor && getBooleanConfig("hide-color-tools");
+//! CODE_EDITOR
 // Listen to config changes
 wrap.after(BipsiEditor.prototype, "refreshEditorPluginConfig", (config) => {
     if (CONFIG === config) {
@@ -338,8 +300,7 @@ async function importMap(options) {
             }));
             if (overwrittenRoom &&
                 (fullOptions.keepColors === true ||
-                    (Array.isArray(fullOptions.keepColors) &&
-                        fullOptions.keepColors.includes(i)))) {
+                    (Array.isArray(fullOptions.keepColors) && fullOptions.keepColors.includes(i)))) {
                 bipsiRoom.foremap = overwrittenRoom.foremap;
                 bipsiRoom.backmap = overwrittenRoom.backmap;
             }
@@ -481,6 +442,47 @@ async function importTiledTilesetAnimation() {
             console.error(e);
         }
     });
+}
+
+//! CODE_EDITOR
+function autoCloseToggledWindow(windowElement, toggle) {
+    window.addEventListener("click", (event) => {
+        const target = event.target;
+        const ignore = windowElement.hidden ||
+            !event.isTrusted ||
+            windowElement.contains(target) ||
+            toggle.inputs.includes(target);
+        if (ignore)
+            return;
+        toggle.checked = false;
+    });
+}
+function createToggleWindow({ windowId, toggleId, inputName, inputTitle, toggleContent, windowContent, }) {
+    const windowEl = document.createElement("div");
+    windowEl.id = windowId;
+    windowEl.className = "popup-window";
+    windowEl.hidden = true;
+    windowEl.innerHTML = windowContent;
+    const toggleButtonEl = document.createElement("label");
+    toggleButtonEl.id = toggleId;
+    toggleButtonEl.className = "toggle picker-toggle";
+    toggleButtonEl.hidden = true;
+    toggleButtonEl.innerHTML = `
+      <input type="checkbox" name="${inputName}" title="${inputTitle}">
+      ${toggleContent}
+    `;
+    // bipsi's ui.toggle requires the element to be in the DOM
+    // so we directly use the CheckboxWrapper
+    const toggle = new CheckboxWrapper(ALL(`[name="${inputName}"]`, toggleButtonEl));
+    toggle?.addEventListener("change", () => {
+        windowEl.hidden = !toggle.checked;
+    });
+    autoCloseToggledWindow(windowEl, toggle);
+    return {
+        window: windowEl,
+        button: toggleButtonEl,
+        toggle,
+    };
 }
 
 var imageUp = "<svg width=\"22\" height=\"15\" fill=\"currentColor\" viewBox=\"0 0 22 15\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M9 4.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z\"/><path d=\"M5 0a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h9.777A4.5 4.5 0 0 1 14 11.5a4.5 4.5 0 0 1 2.256-3.898l-2.033-1.05a.5.5 0 0 0-.577.094l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L4 11V2a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v5.043A4.5 4.5 0 0 1 18.5 7a4.5 4.5 0 0 1 .5.03V2a2 2 0 0 0-2-2z\"/><path d=\"M18.495 15a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zm.354-5.854 1.5 1.5a.5.5 0 0 1-.708.708l-.646-.647V13.5a.5.5 0 0 1-1 0v-2.793l-.646.647a.5.5 0 0 1-.708-.708l1.5-1.5a.5.5 0 0 1 .708 0z\"/></svg>";

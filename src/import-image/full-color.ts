@@ -1,9 +1,11 @@
-import { getBooleanConfig } from "../utils";
+import { getBooleanConfig } from "../all-utils";
 
-//! CODE_EDITOR
+//! CODE_ALL_TYPES
 
 let useFullColor = getBooleanConfig("use-full-color");
 let hideColorTools = useFullColor && getBooleanConfig("hide-color-tools");
+
+//! CODE_EDITOR
 
 // Listen to config changes
 wrap.after(BipsiEditor.prototype, "refreshEditorPluginConfig", (config: BipsiDataEvent) => {

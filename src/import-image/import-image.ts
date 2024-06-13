@@ -2,7 +2,8 @@ import "./full-color";
 import { importMap } from "./importMap";
 import { importTileset } from "./importTileset";
 import { importTiledTilesetAnimation, importTiledMap } from "./importTiled";
-import { createToggleWindow, getBooleanConfig, setBooleanConfig } from "../utils";
+import { createToggleWindow } from "../editor-utils";
+import { getBooleanConfig, setBooleanConfig } from "../all-utils";
 
 import imageUp from "../../icons/image-up.svg";
 import jsonUp from "../../icons/json-up.svg";
